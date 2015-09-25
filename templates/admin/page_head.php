@@ -1,50 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <style>
-        #sidebar {
-            padding-right: 0;
-        }
-
-        #content {
-            padding-left: 0;
-        }
-
-        #navbar-wrapper {
-            margin-bottom: 0px;
-        }
-
-        #sidebar-wrapper {
-        }
-
-        .sidebar-nav {
-            list-style: none;
-            margin: 0;
-            padding: 10px 0 0;
-        }
-
-        .sidebar-nav a {
-            display: block;
-            color: #acb5bf;
-            position: relative;
-            min-height: 40px;
-            line-height: 40px;
-            overflow: hidden;
-            padding: 0 10px;
-        }
-
-        .sidebar-nav
-
-        #main-content {
-            margin-top: 15px;
-        }
-    </style>
-</head>
-<body>
 <!-- #wrapper -->
 <div id="wrapper">
     <nav id="navbar-wrapper" class="navbar navbar-default">
@@ -59,7 +12,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Brand</a>
+                    <a class="navbar-brand" href="#">Admin Dashboard</a>
                 </div>
             </div>
 
@@ -97,7 +50,6 @@
                         </ul>
                     </li>
                 </ul>
-
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -106,62 +58,17 @@
 
     <!-- #content-wrapper -->
     <div id="content-wrapper" class="container">
-
-
         <!-- #sidebar-wrapper -->
-        <div id="sidebar-wrapper" class="col-md-3">
+        <div id="sidebar-wrapper" class="col-md-2">
             <div class="row">
-                <ul class="sidebar-nav">
-                    <li><a href="">Lorem ipsum dolor sit amet.</a>
-                        <ul class="">
-                            <li><a href="">dsfdsf</a></li>
-                            <li>dsfdsf</li>
-                            <li>dsfdsf</li>
-                            <li>dsfdsf</li>
-                            <li>dsfdsf</li>
-                        </ul>
-                    </li>
-                    <li class="active"><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
-                    <li><a href="">Lorem ipsum dolor sit amet.</a></li>
+                <ul class="nav nav-pills nav-stacked">
+                <?php
+                    echo \library\Func::getMenu(\library\Func::arrayMenu(), \library\Func::getUrlCurrent());
+                ?>
                 </ul>
             </div>
         </div>
         <!-- END #sidebar-wrapper -->
 
         <!-- #main-content -->
-        <div id="main-content" class="col-md-9">
-
-            <ol class="breadcrumb">
-                <li class="active">Dashboard</li>
-            </ol>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
-        </div>
-        <!-- END #main-content -->
-
-    </div>
-    <!-- END #content-wrapper -->
-</div>
-<!-- END #wrapper -->
-<script lang="javascript" src="js/jquery-1.11.3.min.js"></script>
-<script lang="javascript" src="js/bootstrap.min.js"></script>
-<script lang="javascript" src="js/pages/dashboard.js"></script>
-<script>$(function () {
-    Dashboard.init();
-})</script>
-</body>
-</html>
+        <div id="main-content" class="col-md-10">

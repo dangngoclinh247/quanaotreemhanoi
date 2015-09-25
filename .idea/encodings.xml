@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/library/func.class.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/models/users.class.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/templates/admin/js/pages/users.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/views/admin/users/add.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/views/welcome/index.php" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
