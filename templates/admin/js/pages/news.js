@@ -4,6 +4,9 @@
 var readyNews = function () {
     return {
         init: function () {
+
+            autoLoadNTypeList();
+
             $("#form-add-ntype").validate({
                 rules: {
                     ntype_name: {
@@ -33,6 +36,7 @@ var readyNews = function () {
                                 $("#add-ntype-message").html(result.message);
                                 $("#add-ntype-message").show();
                                 $("#form-add-ntype").trigger("reset");
+                                autoLoadNTypeList();
                             }
                             else {
                                 alert("Error: " + result.mesage);
@@ -46,11 +50,61 @@ var readyNews = function () {
                 }
             });
 
-            $("#ntype_name").on("input", function() {
+            $("#ntype_name").on("input", function () {
                 var strSlug = to_slug($("#ntype_name").val());
                 //alert(strSlug);
                 $("#ntype_slug").val(strSlug);
             })
+
+            // show mini menu when hover td
+            $(document).on({
+                mouseenter: function () {
+                    $(this).children(".minimenu").fadeIn(200);
+                }
+                ,
+                mouseleave: function () {
+                    $(this).children(".minimenu").fadeOut(200);
+                }
+            }, "#ntype-list td");
+
+            // checked all
+            $("#ntype-checkbox-all").on("change", function () {
+                var statusCheckbox = $(this).prop("checked");
+                var currentTable = $(this).closest("table");
+                $("input:checkbox").prop(statusCheckbox);
+            });
         }
     }
 }();
+
+function autoLoadNTypeList() {
+    // get ntype list
+    $.ajax({
+        url: "/admin.php?c=news&m=ntype_list",
+        type: "post",
+        success: function (result) {
+            $("#panel-ntype-list .panel-body").html(result);
+        },
+        error: function (e) {
+            alert("Khong the lay danh sach news type " + e.responseText)
+        }
+    });
+}
+
+function ntype_delete(id)
+{
+    $.ajax({
+        url: "/admin.php?c=news&m=ntype_del",
+        type: "post",
+        data: {
+            ntype_delete: "ok",
+            ntype_id: id
+        },
+        success: function (result) {
+            $("#panel-ntype-list .panel-body").html(result);
+        },
+        error: function (e) {
+            alert("Khong the lay danh sach news type " + e.responseText)
+        }
+    });
+}

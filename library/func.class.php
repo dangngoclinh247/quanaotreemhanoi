@@ -112,31 +112,16 @@ class Func
         return $str;
     }
 
-    public static function sortNType($ntypes)
-    {
-        $data = array();
-        foreach($ntypes as $key => $ntype)
-        {
-            if($ntype['ntype_parent_id'] == null)
-            {
-                unset($ntypes[$key]);
-                $ntype["submenu"] = Func::getNTypeOfParent($ntypes, $ntype['ntype_id']);
-                $data[] = $ntype;
-            }
-        }
-        return $data;
-    }
-
-    public static function getNTypeOfParent(array& $data, $ntype_id)
+    public static function sortNType($ntypes, $ntype_id = null)
     {
         $result = array();
-        foreach($data as $key => $item)
+        foreach($ntypes as $key => $ntype)
         {
-            if($item['ntype_parent_id'] == $ntype_id)
+            if($ntype['ntype_parent_id'] == $ntype_id)
             {
-                unset($data[$key]);
-                $item['submenu'] = Func::getNTypeOfParent($data, $item['ntype_id']);
-                $result[] = $item;
+                unset($ntypes[$key]);
+                $ntype["submenu"] = Func::sortNType($ntypes, $ntype['ntype_id']);
+                $result[] = $ntype;
             }
         }
         return $result;

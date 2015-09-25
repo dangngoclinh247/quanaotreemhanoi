@@ -4,5 +4,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^admin/([a-z]+).html$ /admin.php?c=$1 [L]
 RewriteRule ^admin/([a-z]+)/([a-z]+).html$ /admin.php?c=$1&m=$2 [L]
-RewriteRule ^admin/([a-z]+)/([a-z]+)/(0-9]+).html$ /admin.php?c=$1&m=$2&p=$3 [L]
+RewriteRule ^admin/([a-z]+)/([a-z]+)/([0-9]+).html$ /admin.php?c=$1&m=$2&p=$3 [L]
 RewriteRule ^admin.html$ /admin.php [L]

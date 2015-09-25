@@ -31,6 +31,15 @@ class news extends Controllers
         $this->views->render("admin/news/index");
     }
 
+    public function ntype_list()
+    {
+        // Get all ntype
+        $ntype_model = new models\Ntype();
+        $this->views->ntypes = $ntype_model->selectAll();
+
+        $this->views->render("admin/news/ntype_list");
+    }
+
     public function add()
     {
         if (isset($_POST['ntype_add']) && $_POST['ntype_add'] == "ok") {

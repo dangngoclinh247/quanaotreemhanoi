@@ -50,31 +50,12 @@
                     </div>
                 </div>
             </div>
-            <?php
-                function genAdf()
-                {
-
-                }
-            ?>
             <div class="col-md-7">
-                <div class="panel panel-default">
+                <div id="panel-ntype-list" class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Danh sách category Tin tức</h3>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Tên</th>
-                                <th>Slug</th>
-                                <th>Content</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
