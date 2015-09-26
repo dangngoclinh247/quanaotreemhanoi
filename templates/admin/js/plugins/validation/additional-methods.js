@@ -572,7 +572,7 @@ $.validator.addMethod("mobileNL", function(value, element) {
  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
  * A number of very detailed GB telephone number RegEx patterns can also be found at:
- * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
+ * http://www.aa-asterisk.org.uk/ntype.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
  */
 $.validator.addMethod("mobileUK", function(phone_number, element) {
 	phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
@@ -685,7 +685,7 @@ $.validator.addMethod("phoneNL", function(value, element) {
  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
  * A number of very detailed GB telephone number RegEx patterns can also be found at:
- * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
+ * http://www.aa-asterisk.org.uk/ntype.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
  */
 $.validator.addMethod("phoneUK", function(phone_number, element) {
 	phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
@@ -721,7 +721,7 @@ $.validator.addMethod("phoneUS", function(phone_number, element) {
  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
  * A number of very detailed GB telephone number RegEx patterns can also be found at:
- * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
+ * http://www.aa-asterisk.org.uk/ntype.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
  */
 //Matches UK landline + mobile, accepting only 01-3 for landline or 07 for mobile to exclude many premium numbers
 $.validator.addMethod("phonesUK", function(phone_number, element) {

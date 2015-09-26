@@ -55,7 +55,31 @@ class Func
             ),
             array(
                 "name" => "Quản lý tin tức",
-                "url" => Func::getUrl("news")
+                "url" => "/admin.php?c=news",
+                "submenu" => array(
+                    array(
+                        "name" => "Category",
+                        "url" => "admin.php?c=news&m=ntype"
+                    ),
+                    array(
+                        "name" => "Thêm Category",
+                        "url" => "admin.php?c=news&m=ntype"
+                    )
+                )
+            ),
+            array(
+                "name" => "Quản lý sản phẩm",
+                "url" => "/admin.php?c=products",
+                "submenu" => array(
+                    array(
+                        "name" => "Tags",
+                        "url" => "/admin.php?c=products&m=tag"
+                    ),
+                    array(
+                        "name" => "Category",
+                        "url" => "/admin.php?c=products&m=type"
+                    )
+                )
             )
         );
     }
@@ -122,20 +146,6 @@ class Func
                 unset($ntypes[$key]);
                 $ntype["submenu"] = Func::sortNType($ntypes, $ntype['ntype_id']);
                 $result[] = $ntype;
-            }
-        }
-        return $result;
-    }
-
-    public static function getStringOptionNType($data, $prefix = "")
-    {
-        $result = "";
-        foreach($data as $key => $item)
-        {
-            $result .= '<option value="' . $item['ntype_id'] . '">' . $prefix . " " . $item['ntype_name'] . '</option>';
-            if(isset($item['submenu']) && $item['submenu'] != null)
-            {
-                $result .= Func::getStringOptionNType($item['submenu'], $prefix . "--");
             }
         }
         return $result;

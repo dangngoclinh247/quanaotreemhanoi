@@ -12,6 +12,6 @@ function __autoload($className)
     }
     else
     {
-        die("class not found" . $className);
+        die("class not found " . $className);
     }
 }

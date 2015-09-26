@@ -33,7 +33,7 @@ class users extends base\Controllers
     {
         $this->add_ajax();
 
-        $this->views->page->setTitle("Add Users");
+        $this->views->setPageTitle("Thêm người dùng");
         $users_roles = new models\users_roles();
         $this->views->roles = $users_roles->selectAll();
         $this->views->render("admin/users/add");

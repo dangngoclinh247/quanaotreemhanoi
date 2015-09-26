@@ -1,8 +1,13 @@
-$color1: #f0b67f; //rgba(240, 182, 127, 100)
-$color2: #fe5f55; //rgba(254, 95, 85, 100)
-$color3: #9c8bd6; //rgba(156, 139, 214, 100)
-$color4: #96ddca; //rgba(150, 221, 202, 100)
-$color5: #d3d3d3; //rgba(211, 211, 211, 100)
+$color1: #f0b67f;
+//rgba(240, 182, 127, 100)
+$color2: #fe5f55;
+//rgba(254, 95, 85, 100)
+$color3: #9c8bd6;
+//rgba(156, 139, 214, 100)
+$color4: #96ddca;
+//rgba(150, 221, 202, 100)
+$color5: #d3d3d3;
+//rgba(211, 211, 211, 100)
 
 #page-content {
   margin-left: 20px;
@@ -21,6 +26,7 @@ form {
     font-weight: normal;
   }
 }
+
 #message {
   display: none;
 }
@@ -28,4 +34,20 @@ form {
 .minimenu {
   display: none;
   margin: 5px 0 0;
+}
+
+.bg-color-1 {
+  background-color: $color1 !important;
+}
+
+.bg-color-2 {
+  background-color: $color2 !important;
+}
+
+.bg-color-3 {
+  background-color: $color3 !important;
+}
+
+.bg-color-4 {
+  background-color: $color4 !important;
 }

@@ -10,9 +10,6 @@ class Welcome extends base\Controllers
 
     public function index()
     {
-        $this->views->page = array(
-            "title" => "Welcome Admin Dashboard"
-        );
         $this->views->render("welcome/index");
     }
 }

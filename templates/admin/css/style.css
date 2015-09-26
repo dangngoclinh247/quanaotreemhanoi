@@ -18,4 +18,16 @@ form label.error {
   display: none;
   margin: 5px 0 0; }
 
+.bg-color-1 {
+  background-color: #f0b67f !important; }
+
+.bg-color-2 {
+  background-color: #fe5f55 !important; }
+
+.bg-color-3 {
+  background-color: #9c8bd6 !important; }
+
+.bg-color-4 {
+  background-color: #96ddca !important; }
+
 /*# sourceMappingURL=style.css.map */
