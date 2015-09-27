@@ -1,5 +1,5 @@
 /**
- * Created by Liam Dang on 9/26/2015.
+ * Created by Liam Dang on 9/27/2015.
  */
 var readyProductsTag = function () {
     return {
@@ -68,7 +68,7 @@ var readyProductsTag = function () {
                 if(slug_current == "" ||
                     ((slug.length - slug_current.length) <=2
                     && (slug.length - slug_current.length) > -2))
-                $("#ptag_slug").val(slug);
+                    $("#ptag_slug").val(slug);
             })
         }
     }

@@ -9,13 +9,14 @@
     <tbody>
     <?php
     foreach ($this->ptags as $ptag) {
+
         ?>
-        <tr>
-            <td><input class='ntype-check' type='checkbox' name='ntype_select' value='<?php echo $ptag['ptag_id'];?>' /></td>
+        <tr<?php if($this->ptag_id_highlight != -1 && $this->ptag_id_highlight == $ptag['ptag_id']) echo " class='bg-color-3'";?>>
+            <td><input class='ptag-check' type='checkbox' name='ptag_select' value='<?php echo $ptag['ptag_id'];?>' /></td>
             <td><?php echo $ptag['ptag_name']; ?>
                 <p class='minimenu'>
-                    <a href='#' onclick='ntype_edit(<?php echo $ptag['ptag_id']; ?>, this); return false;'>edit</a> -
-                    <a href='#' onclick='ntype_delete(<?php echo $ptag['ptag_id'];?>, this); return false;'>delete</a></p>
+                    <a class="btn_ptag_edit" href='#' onclick='ptag_edit(<?php echo $ptag['ptag_id']; ?>, this); return false;'>edit</a> -
+                    <a href='#' onclick='ptag_delete(<?php echo $ptag['ptag_id'];?>, this); return false;'>delete</a></p>
             </td>
             <td><?php echo $ptag['ptag_slug']; ?></td>
         </tr>

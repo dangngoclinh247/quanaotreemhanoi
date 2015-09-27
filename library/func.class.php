@@ -9,27 +9,35 @@ class Func
     {
         $data = "";
         foreach ($menus as $menu) {
-            if ($menu['url'] == $url_current) {
+            if($menu['url'] == $url_current || (isset($menu['submenu']) && Func::in_array_url($url_current, $menu['submenu']) == true))
+            {
                 $data .= '<li class="active"><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>';
-            } else {
-                $data .= "<li";
-                // else check in menu sub
-                if (isset($menu['submenu'])) {
-                    if (in_array($url_current, $menu['submenu'])) {
-                        $data .= ' class="active"';
-                    }
-                }
-                $data .= '><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>';
+            }
+            else
+            {
+                $data .= '<li><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>';
             }
             if (isset($menu['submenu'])) {
                 $data .= "<ul>";
-                $data .= Func::getMenu($menu['submenu'], "");
+                $data .= Func::getMenu($menu['submenu'], $url_current);
                 $data .= "</ul>";
             } else {
                 $data .= "</li>";
             }
         }
         return $data;
+    }
+
+    public static function in_array_url($url_current, $menus)
+    {
+        foreach($menus as $menu)
+        {
+            if($menu['url'] == $url_current)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static function arrayMenu()
@@ -59,11 +67,11 @@ class Func
                 "submenu" => array(
                     array(
                         "name" => "Category",
-                        "url" => "admin.php?c=news&m=ntype"
+                        "url" => "/admin.php?c=news&m=ntype"
                     ),
                     array(
                         "name" => "Thêm Category",
-                        "url" => "admin.php?c=news&m=ntype"
+                        "url" => "/admin.php?c=news&m=ntype"
                     )
                 )
             ),
