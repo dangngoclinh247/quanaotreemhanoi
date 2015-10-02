@@ -27,6 +27,22 @@ class products extends base\Controllers
         echo "products -> index";
     }
 
+    public function products_add()
+    {
+
+        // Get list products_type
+        $prot_model = new models\Prot();
+        $this->views->prots = $this->type_sort($prot_model->selectAll());
+
+        // show form products_add
+        $this->views->render("admin/products/products_add");
+    }
+
+    public function products_add_insert()
+    {
+
+    }
+
     public function tag()
     {
         $this->views->render("admin/products/tag");
@@ -176,29 +192,96 @@ class products extends base\Controllers
 
     public function type_list($prot_id = -1)
     {
+        // Get all ptag
+        $prot_model = new models\Prot();
+        $this->views->prots = $this->type_sort($prot_model->selectAll());
+        $this->views->prot_id_highlight = $prot_id;
 
+        $this->views->render("admin/products/type_list");
     }
 
     public function type_edit($prot_id)
     {
-
+        // Get all ptag
+        $prot_model = new models\Prot();
+        $this->views->prots = $this->type_sort($prot_model->selectAll());
+        $this->views->prot = $prot_model->select($prot_id);
+        if ($this->views->prot == false) {
+            echo "0";
+        } else {
+            $this->views->render("admin/products/type_edit");
+        }
     }
 
     public function type_update($prot_id)
     {
+        $prot_model = new models\Prot();
+        $this->views->prot = $prot_model->select($prot_id);
 
+        $result = array(
+            "status" => 0,
+            "message" => "Loi"
+        );
+        if ($this->views->prot == false) {
+            $result['message'] = "Product Tag Nay Da Bi Xoa";
+
+        } else {
+            $data = array(
+                "prot_name" => $_POST['prot_name'],
+                "prot_slug" => $_POST['prot_slug'],
+                "prot_seo_title" => $_POST['prot_seo_title'],
+                "prot_seo_description" => $_POST['prot_seo_description'],
+                "prot_parent_id" => $_POST['prot_parent_id'],
+                "prot_content" => $_POST['prot_content']
+            );
+
+            $data['prot_slug'] = library\Func::getSlug(trim($data['prot_slug']));
+
+            if ($data['prot_slug'] == "") {
+                $data['prot_slug'] = library\Func::getSlug(trim($data['prot_name']));
+            }
+            if ($data['prot_seo_title'] == "") {
+                $data['prot_seo_title'] = null;
+            }
+            if ($data['prot_seo_description'] == "") {
+                $data['prot_seo_description'] = null;
+            }
+            if ($data['prot_parent_id'] == "") {
+                $data['prot_parent_id'] = null;
+            }
+            if (strip_tags($data['prot_content']) == "") {
+                $data['prot_content'] = null;
+            }
+
+            $prot_model = new models\Prot();
+            $result_del = $prot_model->update($data, $prot_id);
+            if ($result_del == true) {
+                $result['status'] = "1";
+                $result['message'] = library\Func::getAlert("Update Thanh Cong");
+            }
+        }
+        echo json_encode($result);
     }
+
 
     public function type_del($prot_id)
     {
-
+        $result = "0";
+        $prot_model = new models\Prot();
+        if ($prot_model->select($prot_id) != false) // tồn tại
+        {
+            if ($prot_model->delete($prot_id) == true) {
+                $result = "1";
+            }
+        }
+        echo $result;
     }
 
     public function type_add()
     {
-        // Get all ntype
-        $prot_modal = new models\Ptag();
-        $this->views->prots = $prot_modal->selectAll();
+        // Get all prot
+        $prot_modal = new models\Prot();
+        $this->views->prots = $this->type_sort($prot_modal->selectAll());
         $this->views->render("admin/products/type_add");
     }
 
@@ -206,39 +289,40 @@ class products extends base\Controllers
     {
 
         $data = array(
-            "ntype_name" => $_POST['ntype_name'],
-            "ntype_slug" => $_POST['ntype_slug'],
-            "ntype_seo_title" => $_POST['ntype_seo_title'],
-            "ntype_seo_description" => $_POST['ntype_seo_description'],
-            "ntype_add_date" => date("Y-m-d H:i:s"),
-            "ntype_parent_id" => $_POST['ntype_parent_id'],
-            "ntype_content" => $_POST['ntype_content']
+            "prot_name" => $_POST['prot_name'],
+            "prot_slug" => $_POST['prot_slug'],
+            "prot_seo_title" => $_POST['prot_seo_title'],
+            "prot_seo_description" => $_POST['prot_seo_description'],
+            "prot_add_date" => date("Y-m-d H:i:s"),
+            "prot_parent_id" => $_POST['prot_parent_id'],
+            "prot_content" => $_POST['prot_content']
         );
 
-        $data['ntype_slug'] = Func::getSlug(trim($data['ntype_slug']));
+        $data['prot_slug'] = library\Func::getSlug(trim($data['prot_slug']));
 
-        if ($data['ntype_slug'] == "") {
-            $data['ntype_slug'] = Func::getSlug(trim($data['ntype_name']));
+        if ($data['prot_slug'] == "") {
+            $data['prot_slug'] = library\Func::getSlug(trim($data['prot_name']));
         }
-        if ($data['ntype_seo_title'] == "") {
-            $data['ntype_seo_title'] = null;
+        if ($data['prot_seo_title'] == "") {
+            $data['prot_seo_title'] = null;
         }
-        if ($data['ntype_seo_description'] == "") {
-            $data['ntype_seo_description'] = null;
+        if ($data['prot_seo_description'] == "") {
+            $data['prot_seo_description'] = null;
         }
-        if ($data['ntype_parent_id'] == "") {
-            $data['ntype_parent_id'] = null;
+        if ($data['prot_parent_id'] == "") {
+            $data['prot_parent_id'] = null;
         }
-        if (strip_tags($data['ntype_content']) == "") {
-            $data['ntype_content'] = null;
+        if (strip_tags($data['prot_content']) == "") {
+            $data['prot_content'] = null;
         }
 
-        $ntype_model = new models\Ntype();
-        $result = $ntype_model->insert($data);
+        $prot_model = new models\Prot();
+        $result = $prot_model->insert($data);
         if ($result == true) {
             exit(json_encode(array(
                 "status" => "1",
-                "message" => Func::getAlert("Da Them Category Thanh Cong")
+                "message" => library\Func::getAlert("Da Them Category Thanh Cong"),
+                "prot_id" => $prot_model->insert_id
             )));
         } else {
             exit(json_encode(array(
@@ -246,5 +330,21 @@ class products extends base\Controllers
                 "message" => "Error:" . $result
             )));
         }
+    }
+
+    /**
+     *  Sort products all type to list
+     */
+    public function type_sort($prots, $prot_parent_id = null)
+    {
+        $result = array();
+        foreach ($prots as $key => $prot) {
+            if ($prot['prot_parent_id'] == $prot_parent_id) {
+                unset($prots[$key]);
+                $prot['submenu'] = $this->type_sort($prots, $prot['prot_id']);
+                $result[] = $prot;
+            }
+        }
+        return $result;
     }
 }

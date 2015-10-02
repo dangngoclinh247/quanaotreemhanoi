@@ -1,18 +1,16 @@
 <?php
-$prots = \library\Func::sortNType($this->prots);
-function getStringOptionNType($data, $prefix = "")
+function getStringOptionProt($data, $prefix = "")
 {
     $result = "";
-    foreach($data as $key => $item)
-    {
+    foreach ($data as $item) {
         $result .= '<option value="' . $item['prot_id'] . '">' . $prefix . " " . $item['prot_name'] . '</option>';
-        if(isset($item['submenu']) && $item['submenu'] != null)
-        {
-            $result .= getStringOptionNType($item['submenu'], $prefix . "--");
+        if (isset($item['submenu']) && $item['submenu'] != null) {
+            $result .= getStringOptionProt($item['submenu'], $prefix . "--");
         }
     }
     return $result;
 }
+
 ?>
 <div id="add-prot-message" class="messages">
 </div>
@@ -21,7 +19,7 @@ function getStringOptionNType($data, $prefix = "")
         <h3 class="panel-title">Thêm category</h3>
     </div>
     <div class="panel-body">
-        <form id="form-add-prot" action="" method="post">
+        <form id="form-add-type" action="" method="post">
             <div class="form-group">
                 <label for="input-name">Tên Category (<span
                         style="color: red; font-weight: bold;">*</span>)</label>
@@ -42,7 +40,9 @@ function getStringOptionNType($data, $prefix = "")
                 <label for="input-slug">Parent Category</label>
                 <select id="prot_parent_id" class="form-control">
                     <option value="">None</option>
-                    <?php echo getStringOptionNType($prots, ""); ?>
+                    <?php
+                        echo getStringOptionProt($this->prots, "");
+                    ?>
                 </select>
             </div>
             <div class="form-group">

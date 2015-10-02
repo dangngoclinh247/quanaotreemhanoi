@@ -11,6 +11,8 @@ class Models extends \mysqli
     }
 
     /**
+     * return full table name: prefix and name
+     *
      * @return mixed
      */
     public function getTableName($name)
@@ -18,6 +20,12 @@ class Models extends \mysqli
         return DB_TABLE_PREFIX . $name;
     }
 
+    /**
+     * fetch assoc all row of mysqli_result
+     *
+     * @param \mysqli_result $result
+     * @return array
+     */
     public function fetch_assoc_all(\mysqli_result $result)
     {
         $data = array();

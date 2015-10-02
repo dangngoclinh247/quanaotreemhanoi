@@ -1,9 +1,9 @@
 <!-- #wrapper -->
 <div id="wrapper">
     <nav id="navbar-wrapper" class="navbar navbar-default">
-        <div class="container">
+        <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header col-md-3">
+            <div class="navbar-header col-md-2">
                 <div class="row">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                             data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -57,9 +57,9 @@
     </nav>
 
     <!-- #content-wrapper -->
-    <div id="content-wrapper" class="container">
+    <div id="content-wrapper" class="container-fluid">
         <!-- #sidebar-wrapper -->
-        <div id="sidebar-wrapper" class="col-md-2">
+        <div id="sidebar-wrapper" class="col-md-2 bg-color-1">
             <div class="row">
                 <ul class="nav nav-pills nav-stacked">
                 <?php
@@ -72,3 +72,4 @@
 
         <!-- #main-content -->
         <div id="main-content" class="col-md-10">
+            <div class="row">

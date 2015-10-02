@@ -68,7 +68,7 @@ class Prot extends base\Models
         );
         $result = $stmt->execute();
         if ($result != true) {
-            $result == $stmt->error;
+            $result == $this->error;
         }
         $stmt->close();
         return $result;

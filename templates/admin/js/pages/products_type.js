@@ -1,13 +1,18 @@
 /**
  * Created by Liam Dang on 9/27/2015.
  */
-var readyProductsTag = function () {
+var readyProductsType = function () {
     return {
         init: function () {
 
-            // Load tag_add and tag_list
-            load_ptag_add();
-            load_ptag_list();
+            // Load type add form
+            load_type_add();
+            load_prot_list();
+
+            $(document).on("input", "#form-add-type #prot_name", function(e) {
+                var slug = to_slug($(this).val());
+                $("#prot_slug").val(slug);
+            });
 
             // show mini menu when hover td
             $(document).on({
@@ -18,71 +23,51 @@ var readyProductsTag = function () {
                 mouseleave: function () {
                     $(this).find(".minimenu").hide();
                 }
-            }, "#ptag-list tr");
+            }, "#prot-list tr");
 
-            $(document).on("click", "#btn-add-ptag", function() {
+            // end message when click add
+            $(document).on("click", "#btn-add-type", function() {
                 $(".messages").hide();
             });
 
             // init check all
-            $(document).on("change", "#ptag-checkbox-all", function() {
+            $(document).on("change", "#prot-checkbox-all", function() {
                 var changeStatus = $(this).prop("checked");
-                $(".ptag-check").each(function() {
+                $(".prot-check").each(function() {
                     $(this).prop("checked", changeStatus);
                 });
             });
 
             // unchecked all if any checkbox uncheck
-            $(document).on("change", ".ptag-check", function() {
-                $("#ptag-checkbox-all").prop("checked", false);
+            $(document).on("change", ".prot-check", function() {
+                $("#prot-checkbox-all").prop("checked", false);
             });
 
-            $(document).on("validate", "#form-update-ptag", {
-                rules: {
-                    ptag_name: {
-                        required: true
-                    }
-                },
-                messages: {
-                    ptag_name: {
-                        required: "Vui lòng nhập Tên Product Tag"
-                    }
-                },
-                submitHandler: function() {
-                    alert("lamdang");
-                }
-            })
-
             //remove all class bg-color-3 when click edit
-            $(document).on("click", ".btn_ptag_edit", function() {
+            $(document).on("click", ".btn_prot_edit", function() {
                 $("table tr").removeClass("bg-color-3");
             });
 
             $(document).on("click", "#load-form-add", function() {
-                load_ptag_add();
+                load_type_add();
             });
 
-            $(document).on("input", "#form-add-ptag #ptag_name", function(e) {
-                var slug = to_slug($(this).val());
-                var slug_current =  $("#ptag_slug").val();
-                if(slug_current == "" ||
-                    ((slug.length - slug_current.length) <=2
-                    && (slug.length - slug_current.length) > -2))
-                    $("#ptag_slug").val(slug);
-            })
+            $(document).on("click", ".btn_ptag_edit", function() {
+                $("tr").removeClass("bg-color-3");
+            });
         }
     }
 }();
 
-// Load form ptag add
-function load_ptag_add() {
+// Load form prot add
+function load_type_add() {
     $.ajax({
-        url: "/admin.php?c=products&m=tag_add",
+        url: "/admin.php?c=products&m=type_add",
         async: false,
         success: function (result) {
-            $("#products-tag-wrapper .tag-command").html(result);
+            $("#products-type-wrapper .type-command").html(result);
             init_textarea();
-            load_ptag_add_validate();
+            load_type_add_validate();
         },
         error: function (e) {
             alert("Khong the lay danh sach news type " + e)
@@ -90,37 +75,38 @@ function load_ptag_add() {
     });
 }
 
-// load check validate for form ptag add
-function load_ptag_add_validate() {
-    $("#form-add-ptag").validate({
+// load check validate for form prot add
+function load_type_add_validate() {
+    $("#form-add-type").validate({
         rules: {
-            ptag_name: {
+            prot_name: {
                 required: true
             }
         },
         messages: {
-            ptag_name: {
+            prot_name: {
                 required: "Vui lòng nhập Tên Product Tag"
             }
         },
         submitHandler: function () {
             $.ajax({
-                url: "admin.php?c=products&m=tag_insert",
+                url: "admin.php?c=products&m=type_insert",
                 type: "post",
                 dataType: "json",
                 data: {
-                    ptag_add: "ok",
-                    ptag_name: $("#ptag_name").val(),
-                    ptag_slug: $("#ptag_slug").val(),
-                    ptag_seo_title: $("#ptag_seo_title").val(),
-                    ptag_seo_description: $("#ptag_seo_description").val(),
-                    ptag_content: $("#ptag_content").code()
+                    prot_name: $("#prot_name").val(),
+                    prot_slug: $("#prot_slug").val(),
+                    prot_seo_title: $("#prot_seo_title").val(),
+                    prot_seo_description: $("#prot_seo_description").val(),
+                    prot_content: $("#prot_content").code(),
+                    prot_parent_id: $("#prot_parent_id").val()
                 },
                 success: function (result) {
                     if (result.status == "1") {
                         show_message(result.message);
-                        $("#form-add-ptag").trigger("reset");
-                        load_ptag_list();
+                        $("#form-add-prot").trigger("reset");
+                        load_prot_list(result.prot_id);
+                        load_add_highlight();
                     }
                     else {
                         alert("Error: " + result.mesage);
@@ -134,39 +120,38 @@ function load_ptag_add_validate() {
         }
     });
 }
-function load_ptag_edit_validate(ptag_id) {
-    $("#form-update-ptag").validate({
+function load_prot_edit_validate(prot_id) {
+    $("#form-update-prot").validate({
         rules: {
-            ptag_name: {
+            prot_name: {
                 required: true
             }
         },
         messages: {
-            ptag_name: {
+            prot_name: {
                 required: "Vui lòng nhập Tên Product Tag"
             }
         },
         submitHandler: function () {
             $.ajax({
-                url: "admin.php?c=products&m=tag_update&p=" + ptag_id,
+                url: "admin.php?c=products&m=type_update&p=" + prot_id,
+                async: false,
                 type: "post",
                 dataType: "json",
                 data: {
-                    ptag_update: "ok",
-                    ptag_name: $("#ptag_name").val(),
-                    ptag_slug: $("#ptag_slug").val(),
-                    ptag_seo_title: $("#ptag_seo_title").val(),
-                    ptag_seo_description: $("#ptag_seo_description").val(),
-                    ptag_content: $("#ptag_content").code()
+                    prot_name: $("#prot_name").val(),
+                    prot_slug: $("#prot_slug").val(),
+                    prot_seo_title: $("#prot_seo_title").val(),
+                    prot_seo_description: $("#prot_seo_description").val(),
+                    prot_content: $("#prot_content").code(),
+                    prot_parent_id: $("#prot_parent_id").val()
                 },
                 success: function (result) {
                     if (result.status == "1") {
                         show_message(result.message);
                         $("#form-add-update").trigger("reset");
-                        load_ptag_list(ptag_id);
-
-                        //reload form
-                        ptag_edit(ptag_id);
+                        load_prot_list(prot_id);
+                        prot_edit(prot_id);
                     }
                     else {
                         alert("Error: " + result.mesage);
@@ -181,20 +166,18 @@ function load_ptag_edit_validate(ptag_id) {
     });
 }
 
-//parameter ptag id want to highlight
-function load_ptag_list(ptag_id) {
+//parameter prot id want to highlight
+function load_prot_list(prot_id) {
     // get ntype list
     $.ajax({
-        url: "/admin.php?c=products&m=tag_list&p=" + ptag_id,
+        url: "/admin.php?c=products&m=type_list&p=" + prot_id,
         async: false,
         success: function (result) {
-            $("#panel-ptag-list .panel-body").html(result);
+            $("#panel-prot-list").html(result);
 
-            // install checkbox all
-            //init_checkbox_all()
         },
         error: function (e) {
-            alert("Khong the lay danh sach products tag " + e.responseText)
+            alert("Khong the lay danh sach products type " + e.responseText)
         }
     });
 }
@@ -202,7 +185,7 @@ function load_ptag_list(ptag_id) {
 
 // setting summernote for textarea
 function init_textarea() {
-    $("#ptag_content").summernote({
+    $("#prot_content").summernote({
         toolbar: [
             //[groupname, [button list]]
 
@@ -212,23 +195,17 @@ function init_textarea() {
     });
 }
 
-// install edit and delete link on ptag table
-function ptag_delete(ptag_id, current_element)
+// install edit and delete link on prot table
+function prot_delete(prot_id, current_element)
 {
     $.ajax({
-        url: "/admin.php?c=products&m=tag_del",
-        type: "post",
-        data: {
-            ptag_id: ptag_id
-        },
+        url: "/admin.php?c=products&m=type_del&p=" + prot_id,
         success: function (result) {
             if (result == "1") {
                 trElement = $(current_element).closest("tr");
-
-                // load ptag add if trElement == current edit
                 if($(trElement).hasClass("bg-color-3"))
                 {
-                    load_ptag_add();
+                    load_type_add();
                 }
                 trElement.removeClass("bg-color-3").addClass("bg-color-1");
                 trElement.fadeOut(1000);
@@ -243,20 +220,21 @@ function ptag_delete(ptag_id, current_element)
     });
 }
 
-function ptag_edit(ptag_id, current_element)
+function prot_edit(prot_id, current_element)
 {
     $.ajax({
-        url: "/admin.php?c=products&m=tag_edit&p=" + ptag_id,
+        url: "/admin.php?c=products&m=type_edit&p=" + prot_id,
         success: function (result) {
             if (result == "0") {
                 alert("Không tồn tại product tag này");
             }
             else {
-                $("#products-tag-wrapper .tag-command").html(result);
+                $("#products-type-wrapper .type-command").html(result);
+
                 trElement = $(current_element).closest("tr");
                 trElement.addClass("bg-color-3");
                 init_textarea();
-                load_ptag_edit_validate(ptag_id);
+                load_prot_edit_validate(prot_id);
             }
         },
         error: function (e) {
@@ -267,7 +245,14 @@ function ptag_edit(ptag_id, current_element)
 
 function show_message(message)
 {
-    $("#add-ptag-message").html(message);
-    $("#add-ptag-message").show();
-    $("#add-ptag-message").fadeOut(3000);
+    $("#add-prot-message").html(message);
+    $("#add-prot-message").show();
+    $("#add-prot-message").fadeOut(3000);
+}
+
+function load_add_highlight()
+{
+    $("tr.bg-color-3").removeClass("bg-color-3").addClass("active_add_tran");
+    $("tr.active_add_tran").toggleClass("active_add_tran-change");
+
 }

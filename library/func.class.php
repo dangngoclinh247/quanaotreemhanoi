@@ -11,18 +11,18 @@ class Func
         foreach ($menus as $menu) {
             if($menu['url'] == $url_current || (isset($menu['submenu']) && Func::in_array_url($url_current, $menu['submenu']) == true))
             {
-                $data .= '<li class="active"><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>';
+                $data .= '<li class="active"><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>' . "\n";
             }
             else
             {
-                $data .= '<li><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>';
+                $data .= '<li><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>'."\n";
             }
             if (isset($menu['submenu'])) {
                 $data .= "<ul>";
                 $data .= Func::getMenu($menu['submenu'], $url_current);
-                $data .= "</ul>";
+                $data .= "</ul>\n";
             } else {
-                $data .= "</li>";
+                $data .= "</li>\n";
             }
         }
         return $data;
@@ -70,8 +70,12 @@ class Func
                         "url" => "/admin.php?c=news&m=ntype"
                     ),
                     array(
-                        "name" => "Thêm Category",
+                        "name" => "Thêm category",
                         "url" => "/admin.php?c=news&m=ntype"
+                    ),
+                    array(
+                        "name" => "Thêm tin mới",
+                        "url" => "/admin.php?c=news&m=news_add"
                     )
                 )
             ),
@@ -79,6 +83,10 @@ class Func
                 "name" => "Quản lý sản phẩm",
                 "url" => "/admin.php?c=products",
                 "submenu" => array(
+                    array(
+                        "name" => "Thêm sản phẩm",
+                        "url" => "/admin.php?c=products&m=products_add"
+                    ),
                     array(
                         "name" => "Tags",
                         "url" => "/admin.php?c=products&m=tag"

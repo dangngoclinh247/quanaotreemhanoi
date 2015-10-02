@@ -1,3 +1,4 @@
+            </div>
         </div>
         <!-- END #main-content -->
     </div>
