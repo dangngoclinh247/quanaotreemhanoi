@@ -8,12 +8,11 @@
 
 namespace controllers\admin;
 
-use base\Controllers;
 use library\Func;
 use library\Upload;
 use models;
 
-class news extends Controllers
+class news extends Admin_Controllers
 {
     public function __construct()
     {

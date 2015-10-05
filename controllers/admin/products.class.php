@@ -8,11 +8,10 @@
 
 namespace controllers\admin;
 
-use base;
 use library;
 use models;
 
-class products extends base\Controllers
+class products extends Admin_Controllers
 {
     public function __construct()
     {
@@ -29,6 +28,7 @@ class products extends base\Controllers
 
     public function products_add()
     {
+        $this->views->setPageTitle("Thêm sản phẩm");
 
         // Get list products_type
         $prot_model = new models\Prot();
@@ -38,9 +38,78 @@ class products extends base\Controllers
         $this->views->render("admin/products/products_add");
     }
 
-    public function products_add_insert()
+    public function ajax_products_add()
     {
+        $result = -1;
+        if(isset($_POST['pro_add']) && $_POST['pro_add'] == "ok") {
+            $data = array(
+                "id" => null,
+                "pro_name" => null,
+                "pro_slug" => null,
+                "pro_content" => null,
+                "pro_size" => null,
+                "pro_size_info" => null,
+                "pro_price" => null,
+                "pro_quantity" => null,
+                "pro_seo_title" => null,
+                "pro_seo_description" => null,
+                "pro_status" => 0,
+                "user_id" => null,
+            );
 
+            if (isset($_POST['pro_id']) && $_POST['pro_id'] != "") {
+                $data['id'] = $_POST['pro_id'];
+            }
+
+            if (isset($_POST['pro_name']) && $_POST['pro_name'] != "") {
+                $data['pro_name'] = $_POST['pro_name'];
+            }
+
+            if (isset($_POST['pro_slug']) && $_POST['pro_slug'] != "") {
+                $data['pro_slug'] = $_POST['pro_slug'];
+            }
+
+            if (isset($_POST['pro_content']) && $_POST['pro_content'] != "") {
+                $data['pro_content'] = $_POST['pro_content'];
+            }
+
+            if (isset($_POST['pro_size']) && $_POST['pro_size'] != "") {
+                $data['pro_size'] = $_POST['pro_size'];
+            }
+
+            if (isset($_POST['pro_size_info']) && $_POST['pro_size_info'] != "") {
+                $data['pro_size_info'] = $_POST['pro_size_info'];
+            }
+
+            if (isset($_POST['pro_quantity']) && $_POST['pro_quantity'] != "") {
+                $data['pro_quantity'] = $_POST['pro_quantity'];
+            }
+
+            if (isset($_POST['pro_seo_title']) && $_POST['pro_seo_title'] != "") {
+                $data['pro_seo_title'] = $_POST['pro_seo_title'];
+            }
+
+            if (isset($_POST['pro_seo_description']) && $_POST['pro_seo_description'] != "") {
+                $data['pro_seo_description'] = $_POST['pro_seo_description'];
+            }
+
+            if (isset($_POST['pro_status']) && $_POST['pro_status'] != "") {
+                $data['pro_status'] = $_POST['pro_status'];
+            }
+
+            if (isset($_SESSION['user_id']) && $_SESSION['user_id'] != "") {
+                $data['user_id'] = $_SESSION['user_id'];
+            }
+
+            //print_r($data);
+
+            $products_model = new models\Products();
+            if($products_model->insert($data))
+            {
+                $result = $products_model->insert_id;
+            }
+        }
+        echo $result;
     }
 
     public function tag()

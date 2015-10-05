@@ -1,7 +1,9 @@
 <?php
 namespace controllers\admin;
+
 use base;
-class Welcome extends base\Controllers
+
+class Welcome extends Admin_Controllers
 {
     public function __construct()
     {

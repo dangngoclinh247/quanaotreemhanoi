@@ -2,46 +2,43 @@
 <?php include '/templates/admin/page_head.php'; ?>
     <div id="page-content">
         <div class="row">
-            <div id="products-tag-wrapper" class="col-md-5">
+            <div id="brand-update-wrapper" class="col-md-5">
                 <!--form add / edit-->
                 <div class="tag-command">
-                    <div id="add-ptag-message" class="messages">
-                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">Update Thương Hiệu</h3>
                         </div>
                         <div class="panel-body">
-                            <form id="form-add-brand" action="" method="post">
+                            <form id="form-update-brand" action="/admin.php?c=brand" method="post">
                                 <div class="form-group">
                                     <label for="input-name">Tên Thương hiệu (<span
                                             style="color: red; font-weight: bold;">*</span>)</label>
                                     <input type="text" class="form-control" name="brand_name" id="brand_name"
-                                           placeholder="Tên products tag">
+                                           placeholder="Tên products tag" value="<?php echo $this->brand['brand_name'];?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="input-slug">Slug</label>
                                     <input type="text" class="form-control" name="brand_slug" id="brand_slug"
-                                           placeholder="Slug">
+                                           placeholder="Slug" value="<?php echo $this->brand['brand_slug'];?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="input-content">Nội dung</label>
-                                    <div id="brand_content"></div>
+                                    <textarea id="brand_content"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="input-seo-title">SEO Title</label>
                                     <input type="text" class="form-control" id="brand_seo_title" name="brand_seo_title"
-                                           placeholder="SEO Title">
+                                           placeholder="SEO Title" value="<?php echo $this->brand['brand_seo_title'];?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="input-seo-description">SEO Description</label>
                 <textarea class="form-control" id="brand_seo_description" name="brand_seo_description"
-                          placeholder="SEO Description" rows="4"></textarea>
+                          placeholder="SEO Description" rows="4"><?php echo $this->brand['brand_seo_description'];?></textarea>
                                 </div>
                                 <div id="btn-group" class="form-group">
-                                    <button id="btn-add-brand" type="submit" class="btn btn-default">Thêm Tag
-                                    </button>
-                                    <button type="reset" class="btn btn-danger">Reset</button>
+                                    <input type="hidden" id="brand_id" name="brand_id" value="<?php echo $this->brand['brand_id'];?>">
+                                    <button id="btn-update-brand" name="btn-update-brand" type="submit" class="btn btn-default">Update</button>
                                 </div>
                             </form>
                         </div>
@@ -71,7 +68,7 @@
     <script src="/templates/admin/js/pages/brand.js"></script>
     <script src="/templates/admin/js/script.js"></script>
     <script>$(function () {
-            readyBrandAdd.init();
+            readyBrandEdit.init();
         })</script>
 
 

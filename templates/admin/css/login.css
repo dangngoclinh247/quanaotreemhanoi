@@ -1,0 +1,15 @@
+body {
+    padding-top: 70px;
+    padding-bottom: 40px;
+    background-color: #eee;
+}
+
+#panel-login {
+    max-width: 450px;
+    margin: auto auto;
+}
+
+label.error {
+    font-weight: 300;
+    color: #f0b67f;
+}

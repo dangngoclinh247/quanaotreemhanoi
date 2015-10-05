@@ -67,7 +67,7 @@ class Brand extends base\Models
                                                                         brand_update_date=?
                                                                     WHERE brand_id = ?";
         $stmt = $this->prepare($sql);
-        $stmt->bind_param("sssssi", $data['brand_name'],
+        $stmt->bind_param("ssssssi", $data['brand_name'],
             $data['brand_slug'],
             $data['brand_content'],
             $data['brand_seo_title'],
@@ -88,6 +88,41 @@ class Brand extends base\Models
         $sql = "SELECT * FROM " . $this->getTableName("products_brand") . " WHERE brand_id=?";
         $stmt = $this->prepare($sql);
         $stmt->bind_param("i", $brand_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * select products brand row where $brand_name
+     *
+     * @param $brand_name
+     * @return array
+     */
+    public function selectByName($brand_name)
+    {
+        $sql = "SELECT * FROM " . $this->getTableName("products_brand") . " WHERE brand_name=?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("s", $brand_name);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * select products brand row where $brand_name but different $brand_id
+     *
+     * @param $brand_name
+     * @param $brand_id
+     * @return array
+     */
+    public function selectByNameDiffID($brand_name, $brand_id)
+    {
+        $sql = "SELECT * FROM " . $this->getTableName("products_brand") . " WHERE brand_name=? AND brand_id<>?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("si", $brand_name, $brand_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();

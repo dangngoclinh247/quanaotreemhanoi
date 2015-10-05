@@ -94,6 +94,10 @@ class Func
                     array(
                         "name" => "Category",
                         "url" => "/admin.php?c=products&m=type"
+                    ),
+                    array(
+                        "name" => "Thương hiệu",
+                        "url" => "/admin.php?c=brand"
                     )
                 )
             )
@@ -165,5 +169,27 @@ class Func
             }
         }
         return $result;
+    }
+
+    /**
+     * return Password hash from $password and $salt
+     *
+     * @param $password
+     * @param $salt
+     * @return string
+     */
+    public static function genPassword($password, $salt)
+    {
+        return hash('sha256', $password . $salt);
+    }
+
+    /**
+     * Generator salt for password
+     *
+     * @return string
+     */
+    public static function genPasswordSalt()
+    {
+        return bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
     }
 }

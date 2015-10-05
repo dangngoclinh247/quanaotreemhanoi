@@ -12,9 +12,10 @@ function getProductsType($data, $prefix = "")
     }
     return $result;
 }
+
 ?>
     <div id="page-content">
-        <form id="add-user" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <form id="form-products-add" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
             <div class="col-md-9">
 
                 <div class="panel panel-default">
@@ -36,7 +37,7 @@ function getProductsType($data, $prefix = "")
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon"
-                                      id="basic-addon1">http://quanaotreemhanoi.com/tin-tuc/</span>
+                                      id="basic-addon1">http://quanaotreemhanoi.com/san-pham/</span>
                                 <input type="text" class="form-control" id="pro_slug" name="pro_slug"
                                        placeholder="Url bài viết">
                                 <span class="input-group-addon">.html</span>
@@ -46,104 +47,102 @@ function getProductsType($data, $prefix = "")
                             <textarea class="form-control" rows="3"
                                       id="pro_content" name="pro_content"></textarea>
                         </div>
-
-
                     </div>
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Thông tin sản phẩm</div>
                     <div class="panel-body">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label for="pro_seo_title" class="col-sm-2 control-label">Mã sản phẩm: </label>
+                        <div class="form-group">
+                            <label for="pro_seo_title" class="col-sm-2 control-label">Mã sản phẩm: </label>
 
-                                <div class="col-sm-6 input-group" style="padding-left: 15px;">
-                                    <input type="text" class="form-control"
-                                           id="pro_id" name="pro_id"
-                                           placeholder="mã sản phẩm">
-                                </div>
+                            <div class="col-sm-6 input-group" style="padding-left: 15px;">
+                                <input type="text" class="form-control"
+                                       id="pro_id" name="pro_id"
+                                       placeholder="mã sản phẩm">
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="pro_seo_title" class="col-sm-2 control-label">Số Size / Ri: </label>
+                        <div class="form-group">
+                            <label for="pro_seo_title" class="col-sm-2 control-label">Số Size / Ri: </label>
 
-                                <div class="col-sm-6 input-group" style="padding-left: 15px;">
-                                    <input type="text" class="form-control"
-                                           id="pro_size" name="pro_size"
-                                           placeholder="Size">
-                                    <span class="input-group-addon">sản phẩm / ri</span>
-                                </div>
+                            <div class="col-sm-6 input-group" style="padding-left: 15px;">
+                                <input type="text" class="form-control"
+                                       id="pro_size" name="pro_size"
+                                       placeholder="Size">
+                                <span class="input-group-addon">sản phẩm / ri</span>
                             </div>
+                            <label id="pro_size-error" class="error col-sm-offset-2" for="pro_size" style="padding-left: 15px;"></label>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="pro_seo_title" class="col-sm-2 control-label">Thông tin Size: </label>
+                        <div class="form-group">
+                            <label for="pro_seo_title" class="col-sm-2 control-label">Thông tin Size: </label>
 
-                                <div class="col-sm-6 input-group" style="padding-left: 15px;">
-                                    <input type="text" class="form-control"
-                                           id="pro_size_info" name="pro_size_info"
-                                           placeholder="Size Info">
-                                    <span class="input-group-addon">Tuổi</span>
-                                </div>
+                            <div class="col-sm-6 input-group" style="padding-left: 15px;">
+                                <input type="text" class="form-control"
+                                       id="pro_size_info" name="pro_size_info"
+                                       placeholder="Size Info">
+                                <span class="input-group-addon">Tuổi</span>
                             </div>
+                            <label id="pro_size_info-error" class="error col-sm-offset-2" for="pro_size_info" style="padding-left: 15px;"></label>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="pro_seo_title" class="col-sm-2 control-label">
-                                    Giá / sản phẩm: </label>
-
-                                <div class="col-sm-6 input-group" style="padding-left: 15px;">
-                                    <input type="text" class="form-control"
-                                           id="pro_price" name="pro_price"
-                                           placeholder="Giá">
-                                    <span class="input-group-addon">VNĐ</span>
-                                </div>
+                        <div class="form-group">
+                            <label for="pro_seo_title" class="col-sm-2 control-label">
+                                Giá / sản phẩm: </label>
+                            <div class="col-sm-6 input-group" style="padding-left: 15px;">
+                                <input type="text" class="form-control"
+                                       id="pro_price" name="pro_price"
+                                       placeholder="Giá">
+                                <span class="input-group-addon">VNĐ</span>
                             </div>
+                            <label id="pro_price-error" class="error col-sm-offset-2" for="pro_price" style="padding-left: 15px;"></label>
+                        </div>
 
-                            <div class="form-group form-inline">
-                                <div class="col-md-2"><label for="pro_seo_title" class="control-label">
-                                        Thương hiệu: </label></div>
+                        <div class="form-group form-inline">
+                            <div class="col-md-2"><label for="pro_seo_title" class="control-label">
+                                    Thương hiệu: </label></div>
 
-                                <div class="col-md-10 form-inline">
-                                    <input type="text" class="form-control"
-                                           id="pro_seo_title" name="pro_seo_title"
-                                           placeholder="Thương hiệu">
-                                    <button class="btn btn-success">
-                                        <i class="fa fa-plus-circle"></i> Thêm</button>
-                                </div>
+                            <div class="col-md-10 form-inline">
+                                <input type="text" class="form-control"
+                                       id="brand_id" name="brand_id"
+                                       placeholder="Thương hiệu">
+                                <button type="button" id="btn-brand-add" class="btn btn-success">
+                                    <i class="fa fa-plus-circle"></i> Thêm
+                                </button>
                             </div>
+                            <label id="brand_id-error" class="error col-sm-offset-2" for="brand_id" style="padding-left: 15px;"></label>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="pro_seo_description" class="col-sm-2 control-label">
-                                    SEO Description</label>
+                        <div class="form-group">
+                            <label for="pro_seo_description" class="col-sm-2 control-label">Tồn kho</label>
 
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" name="pro_seo_description" id="news_seo_description"
-                                              rows="3"></textarea>
-                                </div>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control"
+                                       id="pro_quantity" name="pro_quantity"
+                                       placeholder="Số lượng ri trong kho">
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Thông tin thêm</div>
                     <div class="panel-body">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label for="pro_seo_title" class="col-sm-2 control-label">SEO Title</label>
+                        <div class="form-group">
+                            <label for="pro_seo_title" class="col-sm-2 control-label">SEO Title</label>
 
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="pro_seo_title" name="pro_seo_title"
-                                           placeholder="SEO Title">
-                                </div>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="pro_seo_title" name="pro_seo_title"
+                                       placeholder="SEO Title">
                             </div>
-                            <div class="form-group">
-                                <label for="pro_seo_description" class="col-sm-2 control-label">SEO Description</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="pro_seo_description" class="col-sm-2 control-label">SEO Description</label>
 
-                                <div class="col-sm-10">
+                            <div class="col-sm-10">
                                     <textarea class="form-control" name="pro_seo_description" id="pro_seo_description"
                                               rows="3"></textarea>
-                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -162,10 +161,7 @@ function getProductsType($data, $prefix = "")
                         </div>
 
                         <div class="form-group">
-                            <button id="savebutton" type="submit" class="btn btn-success has-spinner" data-color="green" data-style="expand-right">
-                                <span class="spinner"><i class="fa fa-spinner fa-pulse"></i></span>
-                                Thêm sản phẩm
-                            </button>
+                            <button type="submit" name="btn-products-add" class="btn btn-success">Thêm sản phẩm</button>
                         </div>
                     </div>
                 </div>
@@ -196,6 +192,6 @@ function getProductsType($data, $prefix = "")
     <script src="/templates/admin/js/script.js"></script>
     <script src="/templates/admin/js/pages/products.js"></script>
     <script>$(function () {
-            readyProductsAdd.init();
+            readyProductsAdd.init()
         })</script>
 <?php include '/templates/admin/template_end.php'; ?>

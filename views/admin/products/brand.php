@@ -1,8 +1,23 @@
 <?php include '/templates/admin/template_start.php'; ?>
 <?php include '/templates/admin/page_head.php'; ?>
+
     <div id="page-content">
         <div class="row">
             <div id="products-tag-wrapper" class="col-md-5">
+                <?php
+                if (isset($this->update)) {
+                    if ($this->update) {
+                        ?>
+                        <div class="alert alert-success" role="alert"><strong>Thành công.</strong> Thương hiệu đã được Update</div>
+                        <?php
+                    } else {
+                        ?>
+                        <div class="alert alert-warning" role="alert"><strong>Lỗi</strong> Thông thể update</div>
+                        <?php
+                    }
+                }
+                ?>
+
                 <!--form add / edit-->
                 <div class="tag-command">
                     <div id="add-ptag-message" class="messages">
@@ -26,6 +41,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="input-content">Nội dung</label>
+
                                     <div id="brand_content"></div>
                                 </div>
                                 <div class="form-group">

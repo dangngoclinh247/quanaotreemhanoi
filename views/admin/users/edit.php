@@ -8,9 +8,8 @@
                     <h3 class="panel-title">Chỉnh sửa thông tin người dùng</h3>
                 </div>
                 <div class="panel-body">
-                    <div id="message">&nbsp;</div>
                     <!--form add users-->
-                    <form id="edit-user" class="form-horizontal"
+                    <form id="form-user-edit" class="form-horizontal"
                           action="" method="post">
                         <div class="form-group">
                             <label for="input-name" class="col-sm-3 control-label">Tên</label>
@@ -56,6 +55,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
+                                <input type="hidden" name="user_id" id="user_id" value="<?php echo $this->user['user_id'];?>">
                                 <button type="submit" class="btn btn-default">Update</button>
                                 <button type="reset" class="btn btn-danger">Reset</button>
                             </div>
@@ -67,14 +67,33 @@
         </div>
     </div>
 
+    <div id="modal-edit-success" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Thành công</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Đã Update Người dùng thành công</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tiếp tục update</button>
+                    <a class="btn btn-primary" href="/admin.php?c=users">Quản lý người dùng</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 <?php include '/templates/admin/page_footer.php'; ?>
 <?php include '/templates/admin/template_script.php'; ?>
 
     <!-- Load javascript use on this page -->
     <script src="/templates/admin/js/plugins/validation/jquery.validate.min.js"></script>
+    <script src="/templates/admin/js/script.js"></script>
     <script src="/templates/admin/js/pages/users.js"></script>
     <script>$(function () {
-            readyUser.init();
+            readyUserEdit.init();
         })</script>
 
 

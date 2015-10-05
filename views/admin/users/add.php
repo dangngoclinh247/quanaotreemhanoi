@@ -10,8 +10,8 @@
                 <div class="panel-body">
                     <div id="message">&nbsp;</div>
                     <!--form add users-->
-                    <form id="add-user" class="form-horizontal"
-                          action="<?php echo \library\Func::getUrl("users", "add"); ?>" method="post">
+                    <form id="form-users-add" class="form-horizontal"
+                          action="/admin.php?c=users&m=ajax_check_email" method="post">
                         <div class="form-group">
                             <label for="input-name" class="col-sm-3 control-label">Tên</label>
 
@@ -29,7 +29,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputEmail3" class="col-sm-3 control-label">Mật khẩu</label>
+                            <label for="password" class="col-sm-3 control-label">Mật khẩu</label>
 
                             <div class="col-sm-9">
                                 <input type="password" class="form-control" id="user_pass" name="user_pass"
@@ -68,9 +68,10 @@
 
     <!-- Load javascript use on this page -->
     <script src="/templates/admin/js/plugins/validation/jquery.validate.min.js"></script>
+    <script src="/templates/admin/js/script.js"></script>
     <script src="/templates/admin/js/pages/users.js"></script>
     <script>$(function () {
-            readyUser.init();
+            readyUserAdd.init();
         })</script>
 
 

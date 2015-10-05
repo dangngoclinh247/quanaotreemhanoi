@@ -12,15 +12,19 @@ use base;
 use library\Func;
 use models;
 
-class users extends base\Controllers
+class users extends Admin_Controllers
 {
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * Page admin.php?c=users&m=index
+     */
     public function index()
     {
+        $this->views->setPageTitle("Quản lý Người Dùng");
         // Delete
         $this->delete_ajax();
 
@@ -29,32 +33,67 @@ class users extends base\Controllers
         $this->views->render("admin/users/index");
     }
 
+    /**
+     * Page admin.php?c=users&m=add
+     */
     public function add()
     {
-        $this->add_ajax();
-
         $this->views->setPageTitle("Thêm người dùng");
         $users_roles = new models\users_roles();
         $this->views->roles = $users_roles->selectAll();
         $this->views->render("admin/users/add");
     }
 
-    public function edit($id = -1)
+    /**
+     * Page admin.php?c=users&m=edit
+     *
+     * @param $user_id
+     */
+    public function edit($user_id = -1)
     {
-        if ($id != -1) {
-            $this->edit_ajax($id);
-
+        $this->views->setPageTitle("Update thông tin người dùng");
+        if ($user_id != -1) {
             $users_roles = new models\users_roles();
             $this->views->roles = $users_roles->selectAll();
 
             $user_model = new models\Users();
-            $this->views->user = $user_model->select($id);
+            $this->views->user = $user_model->select($user_id);
             $this->views->render("admin/users/edit");
         }
     }
 
-    public function add_ajax()
+    /**
+     * Ajax check email validate for page: admin.php?c=users&m=add
+     */
+    public function ajax_check_email()
     {
+        $result = "false";
+        if (isset($_POST['user_email']) && $_POST['user_email'] != "") {
+
+            $user_email = $_POST['user_email'];
+            $user_model = new models\Users();
+            if (isset($_POST['user_id']) && $_POST['user_id'] > 0) {
+                $user_id = $_POST['user_id'];
+                $user = $user_model->selectByEmailNotID($user_email, $user_id);
+                if (count($user) < 1) {
+                    $result = "true";
+                }
+            } else {
+                $user = $user_model->selectByEmail($user_email);
+                if (count($user) < 1) {
+                    $result = "true";
+                }
+            }
+        }
+        echo $result;
+    }
+
+    /**
+     * Process for page: admin.php?c=users&m=add
+     */
+    public function ajax_add()
+    {
+        $result = 0;
         if (isset($_POST['add']) && $_POST['add'] = "ok") {
             $data = array(
                 "user_name" => $_POST['user_name'],
@@ -62,43 +101,46 @@ class users extends base\Controllers
                 "user_pass" => $_POST['user_pass'],
                 "roles_id" => $_POST['roles_id']
             );
+            $data['salt'] = Func::genPasswordSalt();
+            $data['user_pass'] = Func::genPassword($data['user_pass'], $data['salt']);
             $user_model = new models\Users();
             if ($user_model->insert($data) == true) {
-                exit(json_encode(array(
-                    "status" => 1,
-                    "message" => Func::getAlert("Da Them Nguoi Dung Thanh Cong")
-                )));
-            } else {
-                exit(json_encode(array(
-                    "status" => 0,
-                    "message" => "Error:" . $user_model->error
-                )));
+                $result = 1;
             }
         }
+        echo $result;
     }
 
-    public function edit_ajax($id)
+    /**
+     * process for Page: /admin.php?c=users&m=edit
+     *
+     * @param $user_id
+     */
+    public function ajax_edit($user_id)
     {
-        if (isset($_POST['edit']) && $_POST['edit'] = "ok") {
+        $result = 0;
+        if (isset($_POST['user_name']) && $_POST['user_name'] != "") {
             $data = array(
                 "user_name" => $_POST['user_name'],
                 "user_email" => $_POST['user_email'],
                 "user_pass" => $_POST['user_pass'],
                 "roles_id" => $_POST['roles_id']
             );
-            $user_model = new models\Users();
-            if ($user_model->update($data, $id) == true) {
-                exit(json_encode(array(
-                    "status" => "1",
-                    "message" => Func::getAlert("Update thong tin nguoi dung thanh cong")
-                )));
+
+            // hash password and create salt for password
+            if (strlen($data['user_pass']) >= 4) {
+                $data['salt'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+                $data['user_pass'] = hash('sha256', $data['user_pass'] . $data['salt']);
             } else {
-                exit(json_encode(array(
-                    "status" => "0",
-                    "message" => "Error:" . $user_model->error
-                )));
+                unset($data['user_pass']);
+            }
+
+            $user_model = new models\Users();
+            if ($user_model->update($data, $user_id) == true) {
+                $result = 1;
             }
         }
+        echo $result;
     }
 
     public function delete_ajax()
@@ -106,14 +148,11 @@ class users extends base\Controllers
         if (isset($_POST['user_id'])) {
             $user_id = $_POST['user_id'];
             $user_model = new models\Users();
-            if (isset($_POST['del']) && $_POST['del'] == "ok")
-            {
+            if (isset($_POST['del']) && $_POST['del'] == "ok") {
                 $user = $user_model->select($user_id);
                 $result = $user_model->delete($user_id);
-                $result = array( array("status" => $result),$user);
-            }
-            else
-            {
+                $result = array(array("status" => $result), $user);
+            } else {
                 // return select user
                 $result = $user_model->select($user_id);
             }

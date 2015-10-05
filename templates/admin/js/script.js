@@ -30,3 +30,20 @@ function to_slug(str)
     // return
     return str;
 }
+
+/**
+ * Get bootstrap components alerts width message and type alert
+ * @param message
+ * @param type
+ * @returns {string}
+ */
+function getAlert(message, type)
+{
+    if(typeof type == 'undefined') type = "success";
+
+    var str = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">';
+    str += '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+    str += message;
+    str += '</div>';
+    return str;
+}
