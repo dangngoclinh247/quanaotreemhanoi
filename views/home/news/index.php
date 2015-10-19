@@ -16,17 +16,28 @@
                 <?php
                 if (isset($this->news) && count($this->news) > 0) {
                     foreach ($this->news as $news) {
+                        $url = $this->url->getUrlBlogView($news['news_id'], $news['news_slug']);
                         $date = new DateTime($news['news_publish_date']);
                         ?>
                         <div class="blog-wrap">
                             <?php
-                            if (isset($news['img_id']) && $news['img_id'] != null) {
+                            if (isset($news['img_url']) && $news['img_url'] != null) {
 
                                 ?>
                                 <div class="blog-media">
                                     <a href="<?php echo $this->url->getUrlBlogView($news['news_id'], $news['news_slug']);?>"
                                        title=""><img src="<?php echo $news['img_url'];?>" alt=""
                                                                         class="img-responsive"></a>
+                                </div>
+                                <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <div class="blog-media">
+                                    <a href="<?php echo $this->url->getUrlBlogView($news['news_id'], $news['news_slug']);?>"
+                                       title=""><img src="http://placehold.it/500x300" alt=""
+                                                     class="img-responsive"></a>
                                 </div>
                                 <?php
                             }
@@ -38,15 +49,14 @@
                             </div>
                             <!-- end post-date -->
                             <div class="post-content">
-                                <h2><a href="<?php echo $this->url->getUrlBlogView($news['news_id'], $news['news_slug']);?>">
+                                <h2><a href="<?php echo $url;?>">
                                         <?php echo $news['news_name'] ?></a></h2>
 
                                 <p><?php echo $this->getShortText(strip_tags($news['news_content']), 500);?></p>
 
                                 <div class="post-meta">
                                     <span><i class="fa fa-user"></i> <a href="#"><?php echo $news['user_name'];?></a> </span>
-                                    <span><i class="fa fa-tag"></i> <a href="#">Galleries</a></span>
-                                    <span><i class="fa fa-comments"></i> <a href="#">21 Comments</a></span>
+                                    <span><i class="fa fa-comments"></i> <a href="<?php echo $url;?>#comments">Comments</a></span>
                                 </div>
                                 <!-- end post-meta -->
                             </div>
@@ -56,25 +66,12 @@
                     }
                 }
                 ?>
-
-                <nav>
-                    <ul class="pagination">
-                        <li>
-                            <a href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li>
-                            <a href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-
+                <?php
+                    if(isset($this->pagination))
+                    {
+                        echo $this->pagination->getHTML();
+                    }
+                ?>
             </div>
             <!-- end content -->
 

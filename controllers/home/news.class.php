@@ -9,6 +9,7 @@
 namespace controllers\home;
 
 use library\Breadcrumb;
+use library\Pagination;
 use models\Images;
 use models\Users;
 
@@ -22,7 +23,7 @@ class news extends Home_Controllers
         $this->loadProductsFeatured(5);
     }
 
-    public function index()
+    public function index($page = 1)
     {
         $breadcrumb = new Breadcrumb();
         $breadcrumb->setH2("Tin Tức");
@@ -30,8 +31,22 @@ class news extends Home_Controllers
         $breadcrumb->addLink("/tin-tuc.html", "Tin Tức", true);
         $this->views->breadcrumb = $breadcrumb;
 
+        $news_per_page = $this->views->options['products_per_page'];
         $news_model = new \models\News();
-        $news = $news_model->select_limit();
+        $start = ($page - 1) * $news_per_page;
+        $stop = $news_per_page;
+        $total_products = $news_model->select_limit_count();
+
+        $total_page = ceil($total_products / $news_per_page);
+        $pagination = new Pagination();
+        $pagination->setTotalPage($total_page);
+        $pagination->setCurrentPage($page);
+        $pagination->setUrl(DOMAIN_NAME . "/tin-tuc/{page}.html");
+        $this->views->pagination = $pagination;
+
+
+        echo $page;
+        $news = $news_model->select_limit($start, $stop);
         $this->views->news = $news;
 
         $this->views->setPageTitle("Tin Tức");

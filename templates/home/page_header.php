@@ -79,55 +79,8 @@
         <div class="topbar">
             <div class="topbar-wrapper">
                 <div class="text-left">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                aria-expanded="false"><i class="fa fa-cart-plus"></i> Cart: (2 items) <span
-                                class="dropme"></span></button>
-                        <ul class="dropdown-menu cartdrop" role="menu">
-                            <li>
-                                <a href="#">
-                                    <img title="product" alt="product" class="alingleft"
-                                         src="/templates/home/upload/shop_menu_01.jpg">
-                                    <h4>Custom Boxer Item
-                                        <small>Quantity : 1 - Price : $23.12</small>
-                                    </h4>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img title="product" alt="product" class="alingleft"
-                                         src="/templates/home/upload/shop_menu_02.jpg">
-                                    <h4>A Man Shoe
-                                        <small>Quantity : 1 - Price : $23.12</small>
-                                    </h4>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="shop-checkout.html" class="btn btn-primary">Checkout</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                aria-expanded="false">En <span class="dropme"></span></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">GR</a></li>
-                            <li><a href="#">TR</a></li>
-                            <li><a href="#">AB</a></li>
-                            <li><a href="#">SP</a></li>
-                            <li><a href="#">IT</a></li>
-                        </ul>
-                    </div>
-                    <!-- /btn-group -->
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                aria-expanded="false"><i class="fa fa-dollar"></i> Euro <span class="dropme"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#"><i class="fa fa-euro"></i> Dollar</a></li>
-                            <li><a href="#"><i class="fa fa-turkish-lira"></i> YTL</a></li>
-                            <li><a href="#"><i class="fa fa-yen"></i> Yen</a></li>
-                        </ul>
+                    <div id="btn-cart-group" class="btn-group">
+                        <?php $this->render("home/cart"); ?>
                     </div>
                 </div>
                 <!-- end right -->
@@ -156,149 +109,19 @@
 
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
+                                <li>
+                                    <a href="/">Trang Chủ</a>
+                                </li>
                                 <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Home <b
+                                    <a href="/" class="dropdown-toggle" data-toggle="dropdown">Sản Phẩm &nbsp;<b
                                             class="fa fa-angle-down"></b></a>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a href="index-default.html">Default Version</a></li>
-                                        <li><a href="index-one.html">Version One</a></li>
-                                        <li><a href="index-two.html">Version Two</a></li>
-                                        <li><a href="index-three.html">Version Three</a></li>
-                                        <li><a href="index-four.html">Version Four</a></li>
+                                        <li><a href="index-default.html">Thời Trang Bé Trai</a></li>
+                                        <li><a href="index-one.html">Thời Trang Bé Gái</a></li>
                                     </ul>
                                 </li>
                                 <!-- end mega menu -->
-                                <li><a href="about.html">About</a></li>
-                                <li class="dropdown ttmenu-half"><a href="#" data-toggle="dropdown"
-                                                                    class="dropdown-toggle">Shopping <b
-                                            class="fa fa-angle-down"></b></a>
-                                    <ul class="dropdown-menu pink">
-                                        <li>
-                                            <div class="ttmenu-content">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="box">
-                                                            <ul>
-                                                                <li><a href="shop-single.html">Shop Single</a></li>
-                                                                <li><a href="shop-single-alt.html">Shop Single Alt</a>
-                                                                </li>
-                                                                <li><a href="shop-product-list.html">Shop Product
-                                                                        List</a></li>
-                                                                <li><a href="shop-filterable-category.html">Shop
-                                                                        Filterable</a></li>
-                                                                <li><a href="shop-left-sidebar.html">Shop Left
-                                                                        Sidebar</a></li>
-                                                                <li><a href="shop-right-sidebar.html">Shop Right
-                                                                        Sidebar</a></li>
-                                                                <li><a href="shop-tag-index.html">Tag Index <span
-                                                                            class="badge">NEW</span></a></li>
-                                                                <li><a href="shop-cart.html">Shopping Cart</a></li>
-                                                            </ul>
-                                                        </div>
-                                                        <!-- end box -->
-                                                    </div>
-                                                    <!-- end col -->
-                                                    <div class="col-md-6">
-                                                        <div class="box">
-                                                            <ul>
-                                                                <li><a href="shop-wishlist.html">Wishlist</a></li>
-                                                                <li><a href="shop-checkout.html">Checkout</a></li>
-                                                                <li><a href="shop-account.html">My Account</a></li>
-                                                                <li><a href="shop-track.html">Order Tracking</a></li>
-                                                                <li><a href="page-not-found.html">404 Not Found</a></li>
-                                                                <li><a href="page-delivery.html">Delivery Time</a></li>
-                                                                <li><a href="typography.html">Typography</a></li>
-                                                                <li><a href="shortcodes.html">Shortcodes</a></li>
-                                                            </ul>
-                                                        </div>
-                                                        <!-- end box -->
-                                                    </div>
-                                                    <!-- end col -->
-                                                </div>
-                                                <!-- end row -->
-                                            </div>
-                                            <!-- end ttmenu-content -->
-                                        </li>
-                                    </ul>
-                                </li>
-                                <!-- end mega menu -->
-                                <li class="dropdown ttmenu-half"><a href="#" data-toggle="dropdown"
-                                                                    class="dropdown-toggle">Boutiques <b
-                                            class="fa fa-angle-down"></b></a>
-                                    <ul class="dropdown-menu blue">
-                                        <li>
-                                            <div class="ttmenu-content">
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="box">
-                                                            <ul>
-                                                                <li><p>The standard chunk of Lorem Ipsum used since the
-                                                                        1500s is reproduced below for those interested,
-                                                                        1.10.32 and 1.10.33 from "de Finibus Bonorum et
-                                                                        Malorum" by Cicero are also re. Sections 1.10.32
-                                                                        and 1.10.33 from.</p></li>
-                                                            </ul>
-                                                        </div>
-                                                        <!-- end box -->
-                                                    </div>
-                                                    <!-- end col -->
-                                                </div>
-                                                <!-- end row -->
-
-                                                <hr>
-
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="box">
-                                                            <ul>
-                                                                <li><a href="shop-product-list.html">Toys and
-                                                                        Stationery</a></li>
-                                                                <li><a href="shop-product-list.html">Baby Safety
-                                                                        Products</a></li>
-                                                                <li><a href="shop-product-list.html">Gift Items</a></li>
-
-                                                            </ul>
-                                                        </div>
-                                                        <!-- end box -->
-                                                    </div>
-                                                    <!-- end col -->
-                                                    <div class="col-md-4">
-                                                        <div class="box">
-                                                            <ul>
-                                                                <li><a href="shop-product-list.html">Organic
-                                                                        Materials</a></li>
-                                                                <li><a href="shop-product-list.html">Pregnant
-                                                                        Products</a></li>
-                                                                <li><a href="shop-product-list.html">Diapers and
-                                                                        Wipes</a></li>
-                                                            </ul>
-                                                        </div>
-                                                        <!-- end box -->
-                                                    </div>
-                                                    <!-- end col -->
-                                                    <div class="col-md-4">
-                                                        <div class="box">
-                                                            <ul>
-                                                                <li><a href="shop-product-list.html">Diapers and
-                                                                        Wipes</a></li>
-                                                                <li><a href="shop-product-list.html">Diapers and
-                                                                        Wipes</a></li>
-                                                                <li><a href="shop-product-list.html">Others</a></li>
-                                                            </ul>
-                                                        </div>
-                                                        <!-- end box -->
-                                                    </div>
-                                                    <!-- end col -->
-                                                </div>
-                                                <!-- end row -->
-                                            </div>
-                                            <!-- end ttmenu-content -->
-                                        </li>
-                                    </ul>
-                                </li>
-                                <!-- end mega menu -->
-                                <li><a href="testimonials.html">Testimonials</a></li>
+                                <li><a href="about.html">Giới thiệu</a></li>
                                 <li><a href="/tin-tuc.html">Tin tức</a></li>
                                 <li><a href="/lien-he.html">Liên hệ</a></li>
                             </ul>
@@ -318,15 +141,12 @@
                 <div class="col-md-9">
                     <div class="custom-menu">
                         <?php
-                        if(isset($_SESSION['user_id']))
-                        {
+                        if (isset($_SESSION['user_id'])) {
                             ?>
-                            <p>Chào <a class="btn-login" href="#"><?php echo $_SESSION['user_name']?></a>,
-                                <a href="<?php echo $this->url->getUrlPage("logout");?>">Đăng xuất</a></p>
+                            <p>Chào <a class="btn-login" href="#"><?php echo $_SESSION['user_name'] ?></a>,
+                                <a href="<?php echo $this->url->getUrlPage("logout"); ?>">Đăng xuất</a></p>
                             <?php
-                        }
-                        else
-                        {
+                        } else {
                             ?>
                             <p>Chào mừng bạn đến với Quần áo trẻ em Hà Nội, Vui lòng <a class="btn-login" href="#">Đăng
                                     nhập</a> hoặc <a class="btn-register" href="#">Đăng ký tài khoản</a></p>

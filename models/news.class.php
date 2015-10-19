@@ -369,20 +369,28 @@ class News extends base\Models
 
     public function select_limit($start = 0, $stop = 10)
     {
-        $sql = "SELECT * FROM (
-                                SELECT n.*, u.user_name
-                                FROM qhn_news n, qhn_users u
-                                WHERE n.user_id = u.user_id
-	                            AND n.status = 1
-	                            ) n2 LEFT JOIN qhn_images i
-	                                  ON i.news_id = n2.news_id
-	                                    AND i.featured = 1";
+        $sql = "SELECT n.*, u.user_name, i.img_url, i.img_alt FROM " . self::TABLE_NAME . " n
+                            LEFT JOIN " . Users::TABLE_NAME . " u ON n.user_id=u.user_id
+                            LEFT JOIN " . Images::TABLE_NAME . " i ON n.news_id=i.news_id AND i.featured = " . Images::FEATURED_YES . "
+                ORDER BY n.news_publish_date DESC
+                LIMIT ?, ?";
         $stmt = $this->prepare($sql);
-        //$stmt->bind_param("i", $this->getNewsId());
+        $stmt->bind_param("ii", $start, $stop);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
         return $this->fetch_assoc_all($result);
+    }
+
+    public function select_limit_count()
+    {
+        $sql = "SELECT count(*) as totalItem FROM qhn_news
+                                WHERE status = 1";
+        $stmt = $this->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result->fetch_assoc()['totalItem'];
     }
 
     /**

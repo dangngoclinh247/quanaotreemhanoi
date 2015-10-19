@@ -13,6 +13,39 @@
         <div class="row">
             <div id="content" class="col-md-9 col-sm-12 pull-right">
                 <div id="single-shop">
+                    <div id="shoptop" class="row">
+                        <div class="col-md-12">
+                            <div class="text-left">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false">Sort by <span class="dropme"></span></button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#">Best Sellers</a></li>
+                                        <li><a href="#">Lower Prices</a></li>
+                                        <li><a href="#">Higher Prices</a></li>
+                                        <li><a href="#">Higher Prices</a></li>
+                                        <li><a href="#">Most Popular</a></li>
+                                    </ul>
+                                </div>
+                                <!-- /btn-group -->
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false">Show <span class="dropme"></span></button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#">15</a></li>
+                                        <li><a href="#">30</a></li>
+                                        <li><a href="#">45</a></li>
+                                        <li><a href="#">60</a></li>
+                                        <li><a href="#">75</a></li>
+                                    </ul>
+                                </div>
+                                <!-- /btn-group -->
+                            </div>
+                            <!-- end right -->
+                        </div>
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
 
                     <div id="shoplist" class="row">
                         <?php

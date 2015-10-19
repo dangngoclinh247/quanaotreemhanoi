@@ -428,6 +428,7 @@ $(".btn-add-to-card").click(function() {
         success: function (result) {
             if (result == "1") {
                 $("#modal-add-to-cart-success").modal("show");
+                load_btn_cart();
             }
             else {
                 alert("You can't Voting " + result);
@@ -458,6 +459,16 @@ function rateAlert(pro_id, pro_rate) {
         },
         error: function (e) {
             alert(e);
+        }
+    })
+}
+
+function load_btn_cart()
+{
+    $.ajax({
+        url: "/home.php?c=page&m=cart_btn",
+        success: function (result) {
+            $("#btn-cart-group").html(result);
         }
     })
 }

@@ -10,7 +10,7 @@ RewriteRule ^admin.html$ /admin.php [L]
 
 #Home PAGE
 RewriteRule ^tin-tuc.html$ /home.php?c=news&m=index [L]
-RewriteRule ^tin-tuc/([0-9]+).html$ /home.php?c=news&m=index&page=$1 [L]
+RewriteRule ^tin-tuc/([0-9]+).html$ /home.php?c=news&m=index&p=$1 [L]
 RewriteRule ^tin-tuc/([0-9]+)-([a-zA-Z0-9\-]+).html$ /home.php?c=news&m=view&p=$1&slug=$2 [L]
 RewriteRule ^lien-he.html$ /home.php?c=page&m=contact [L]
 RewriteRule ^san-pham/([0-9]+)-([a-zA-Z0-9\-]+).html$ /home.php?c=shop&m=view&p=$1&slug=$2 [L]

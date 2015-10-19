@@ -92,7 +92,7 @@
                         <!-- end addw -->
                         <div class="shopbuttons">
                             <div class="btn-group">
-                                <a href="#" data-id="<?php echo $this->product['pro_id'];?>"
+                                <a href="#Add-To-Cart" data-id="<?php echo $this->product['pro_id'];?>"
                                    class="btn btn-primary btn-add-to-card" title=""> Thêm vào giỏ hàng</a>
                             </div>
                         </div>
@@ -298,7 +298,7 @@
                         <!-- end shop-item-title -->
                         <div class="visible-buttons">
                             <a data-tooltip="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
-                               href="#" data-id="<?php echo $product['pro_id'];?>" class="btn-add-to-card">
+                               href="#Add-To-Cart" data-id="<?php echo $product['pro_id'];?>" class="btn-add-to-card">
                                 <span class="fa fa-cart-arrow-down"></span></a>
                             <a data-tooltip="tooltip" data-placement="top" title="Wishlist"
                                href="shop-wishlist.html"><span class="fa fa-heart-o"></span></a>

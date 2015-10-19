@@ -98,7 +98,7 @@ class Cart
         {
             $price = $product['info']['pro_price_sale'];
         }
-        return $product['quantity'] * $price;
+        return $product['quantity'] * $product['info']['pro_size'] * $price;
     }
 
     /**
@@ -114,7 +114,7 @@ class Cart
             {
                 $price = $product['info']['pro_price_sale'];
             }
-            $result += $product['quantity'] * $price;
+            $result += $product['quantity'] * $product['info']['pro_size'] * $price;
         }
         return $result;
     }
@@ -124,8 +124,8 @@ class Cart
         return $this->_products;
     }
 
-    public function total()
+    public function totalProduct()
     {
-
+        return count($this->_products);
     }
 }

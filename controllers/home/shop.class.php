@@ -170,7 +170,13 @@ class shop extends Home_Controllers
             if ($cart->remove_product($product['pro_id'])) {
                 $result = 1;
             }
-            $_SESSION['cart'] = serialize($cart);
+            if(count($cart->getProducts()) > 0) {
+                $_SESSION['cart'] = serialize($cart);
+            }
+            else
+            {
+                unset($_SESSION['cart']);
+            }
         }
         echo $result;
     }

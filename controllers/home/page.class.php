@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * User: Liam Dang
@@ -8,7 +7,10 @@
  */
 namespace controllers\home;
 
+use library\Alert;
 use library\Breadcrumb;
+use models\Cart;
+use models\Cart_Details;
 use models\News;
 use models\Users;
 
@@ -50,25 +52,61 @@ class page extends Home_Controllers
 
     public function cart()
     {
-        if(isset($_POST['user_name']))
+        if(!isset($_SESSION['cart']))
         {
-            echo "<pre>";
-            print_r($_POST);
-            echo "</pre>";
-            exit;
+            header("Location: /");
         }
-        if(isset($_SESSION['user_id']))
-        {
+        if (isset($_POST['order'])) {
+            $message = new Alert();
+            $cart_model = new Cart();
+            $cart = unserialize($_SESSION['cart']);
+            if(isset($_SESSION['user_id']))
+            {
+                $cart_model->setUserId($_SESSION['user_id']);
+                $cart_model->setCartNotes($_POST['cart_notes']);
+                $cart_model->setCartPrice($cart->getTotalPrice());
+                if($cart_model->insert())
+                {
+                    $cart_id = $cart_model->insert_id;
+                    foreach($cart->getProducts() as $product)
+                    {
+                        $cart_details = new Cart_Details();
+                        $cart_details->setCartId($cart_id);
+                        $cart_details->setProId($product['pro_id']);
+                        $cart_details->setCdetailQuantity($product['quantity']);
+                        $cart_details->setCdetailSize($product['info']['pro_size']);
+                        $cart_details->setCdetailPrice($product['info']['pro_price']);
+                        $cart_details->insert();
+                    }
+                    //remove cart
+                    unset($_SESSION['cart']);
+                }
+            }
+            else
+            {
+                $message->setType(Alert::TYPE_DANGER);
+            }
+            $this->views->message = $message;
+        }
+        if (isset($_SESSION['user_id'])) {
             $users_model = new Users();
             $users_model->setUserId($_SESSION['user_id']);
 
             $user = $users_model->select();
-            /*print_r($user);
-            exit;*/
-
             $this->views->user = $user;
         }
+        $breadcrumb = new Breadcrumb();
+        $breadcrumb->setH2("Giỏ Hàng");
+        $breadcrumb->addLink("/", "Trang Chủ");
+        $breadcrumb->addLink("", "Giỏ hàng", true);
+        $this->views->breadcrumb = $breadcrumb;
+
         $this->views->setPageTitle("Giỏ hàng");
         $this->views->render("home/cart/index");
+    }
+
+    public function cart_btn()
+    {
+        $this->views->render("home/cart");
     }
 }

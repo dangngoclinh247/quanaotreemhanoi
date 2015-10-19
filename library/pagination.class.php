@@ -125,4 +125,59 @@ class Pagination
         }
         return $str;
     }
+    public function toStrong()
+    {
+        $str = "";
+        if ($this->_totalPage > 1)
+        {
+            $str .= '<ul class="pagination">';
+            if ($this->_currentPage == 1)
+            {
+                $str .= '<li class="disabled">';
+                $str .= '<a href="#" aria-label="Previous">';
+                $str .= '<span aria-hidden="true">&laquo;</span>';
+                $str .= '</a>';
+                $str .= '</li>';
+            }
+            else
+            {
+                $str .= '<li>';
+                $str .= '<a href="' . $this->getUrl($this->_currentPage-1) . '" aria-label="Previous">';
+                $str .= '<span aria-hidden="true">&laquo;</span>';
+                $str .= '</a>';
+                $str .= '</li>';
+            }
+
+            for($i = 1; $i <= $this->_totalPage; $i++)
+            {
+                if($i == $this->_currentPage)
+                {
+                    $str .= '<li class="active"><a href="' . $this->getUrl($i) . '">' . $i . '</a></li>';
+                }
+                else
+                {
+                    $str .= '<li><a href="' . $this->getUrl($i) . '">' . $i . '</a></li>';
+                }
+            }
+
+            if($this->_currentPage == $this->_totalPage)
+            {
+                $str .= '<li class="disabled">';
+                $str .= '<a href="#" aria-label="Next">';
+                $str .= '<span aria-hidden="true">&raquo;</span>';
+                $str .= '</a>';
+                $str .= '</li>';
+            }
+            else
+            {
+                $str .= '<li>';
+                $str .= '<a href="' . $this->getUrl($this->_currentPage+1) . '" aria-label="Next">';
+                $str .= '<span aria-hidden="true">&raquo;</span>';
+                $str .= '</a>';
+                $str .= '</li>';
+            }
+            $str .= '</ul>';
+        }
+        return $str;
+    }
 }
