@@ -9,36 +9,59 @@
 namespace models;
 
 use base;
-class users_roles extends base\models
+class Users_Roles extends base\models
 {
+    const TABLE_NAME = DB_TABLE_PREFIX . "users_roles";
+
+    private $_roles_id;
+    private $_roles_name;
+
+    /**
+     * @return mixed
+     */
+    public function getRolesId()
+    {
+        return $this->_roles_id;
+    }
+
+    /**
+     * @param mixed $roles_id
+     */
+    public function setRolesId($roles_id)
+    {
+        $this->_roles_id = $roles_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRolesName()
+    {
+        return $this->_roles_name;
+    }
+
+    /**
+     * @param mixed $roles_name
+     */
+    public function setRolesName($roles_name)
+    {
+        $this->_roles_name = $roles_name;
+    }
+
 
     public function __construct()
     {
         parent::__construct();
     }
-    public function delete($id)
+
+    public function select()
     {
 
     }
 
-    public function update($data, $id)
+    public function select_all()
     {
-        // TODO: Implement update() method.
-    }
-
-    public function insert($data)
-    {
-        // TODO: Implement insert() method.
-    }
-
-    public function select($id)
-    {
-        // TODO: Implement select() method.
-    }
-
-    public function selectAll()
-    {
-        $sql = "SELECT * FROM " . $this->getTableName("users_roles");
+        $sql = "SELECT * FROM " . self::TABLE_NAME;
         $result = $this->query($sql);
         return $this->fetch_assoc_all($result);
     }

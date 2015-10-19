@@ -15,11 +15,10 @@ class Root
                 !isset($_SESSION['user_name']) ||
                 !isset($_SESSION['user_roles']))
             {
-                $user_email = $_COOKIE['email'];
-                $user_pass = $_COOKIE['password'];
-
                 $user_model = new Users();
-                $user = $user_model->login($user_email, $user_pass);
+                $user_model->setUserEmail($_COOKIE['email']);
+                $user_model->setUserPass($_COOKIE['password']);
+                $user = $user_model->select_by_email_and_pass();
                 if(count($user) > 0)
                 {
                     $_SESSION['user_name'] = $user['user_name'];
@@ -34,8 +33,8 @@ class Root
             !isset($_SESSION['user_roles']) ||
             $_SESSION['user_roles'] != 6)
         {
-            $page_login = "/admin/login.html";
-            $page_login_process = "/admin/login/process.html";
+            $page_login = "/admin.php?c=login";
+            $page_login_process = "/admin.php?c=login&m=process";
 
             if(SITE_URL != $page_login && SITE_URL != $page_login_process)
             {
@@ -58,9 +57,20 @@ class Root
             $m = trim($_GET['m']);
         }
 
+        $page = 1;
+        if(isset($_GET['page']) && $_GET['page'] > $page)
+        {
+            $page = $_GET['page'];
+        }
+
         if(isset($_GET['p']))
         {
-            $controller->$m($_GET['p']);
+            if($page > 1) {
+                $controller->$m($_GET['p'], $page);
+            } else
+            {
+                $controller->$m($_GET['p']);
+            }
         }
         else
         {

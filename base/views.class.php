@@ -3,6 +3,7 @@ namespace base;
 class Views
 {
     private $page;
+    public $options;
 
     public function __construct()
     {
@@ -49,5 +50,14 @@ class Views
         {
             echo $header . "\n";
         }
+    }
+
+    public function getShortText($str, $number)
+    {
+        $result = substr($str, 0, $number);
+        $result = explode(" ", $result);
+        unset($result[count($result)-1]);
+        $result = implode(" ", $result);
+        return $result;
     }
 }

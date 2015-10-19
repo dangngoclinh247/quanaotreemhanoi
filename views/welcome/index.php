@@ -1,10 +1,10 @@
-<?php include '/templates/admin/template_start.php'; ?>
-<?php include '/templates/admin/page_head.php'; ?>
+<?php include '/templates/admin/old.template_start.php'; ?>
+<?php include '/templates/admin/old.page_head.php'; ?>
     <div id="page-content">
         chào mừng các bạn
     </div>
 
 
 
-<?php include '/templates/admin/page_footer.php'; ?>
-<?php include '/templates/admin/template_end.php'; ?>
+<?php include '/templates/admin/old.page_footer.php'; ?>
+<?php include '/templates/admin/old.template_end.php'; ?>

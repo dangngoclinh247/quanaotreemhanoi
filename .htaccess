@@ -2,7 +2,24 @@ RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f
 
+#Admin PAGE
 RewriteRule ^admin/([a-z]+).html$ /admin.php?c=$1 [L]
 RewriteRule ^admin/([a-z]+)/([a-z]+).html$ /admin.php?c=$1&m=$2 [L]
 RewriteRule ^admin/([a-z]+)/([a-z]+)/([0-9]+).html$ /admin.php?c=$1&m=$2&p=$3 [L]
 RewriteRule ^admin.html$ /admin.php [L]
+
+#Home PAGE
+RewriteRule ^tin-tuc.html$ /home.php?c=news&m=index [L]
+RewriteRule ^tin-tuc/([0-9]+).html$ /home.php?c=news&m=index&page=$1 [L]
+RewriteRule ^tin-tuc/([0-9]+)-([a-zA-Z0-9\-]+).html$ /home.php?c=news&m=view&p=$1&slug=$2 [L]
+RewriteRule ^lien-he.html$ /home.php?c=page&m=contact [L]
+RewriteRule ^san-pham/([0-9]+)-([a-zA-Z0-9\-]+).html$ /home.php?c=shop&m=view&p=$1&slug=$2 [L]
+RewriteRule ^san-pham/([0-9]+)-([a-zA-Z0-9\-]+)$ /home.php?c=shop&m=type&p=$1&slug=$2 [L]
+
+#Acount
+RewriteRule ^tai-khoan.html$ /home.php?c=users&m=account [L]
+
+#INDEX
+RewriteRule ^gio-hang.html$ /home.php?c=page&m=cart [L]
+RewriteRule ^([a-zA-Z0-9\-]+).html$ /home.php?c=page&m=$1 [L]
+RewriteRule ^$ /home.php?c=shop [L]

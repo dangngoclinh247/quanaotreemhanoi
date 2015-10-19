@@ -1,0 +1,14 @@
+.shop-item-list h4 {
+    font-size: 16px;
+    color: #3e3932;
+    line-height: 1.3em !important;
+}
+
+.no-padding-left {
+    padding-left: 0 !important; }
+.no-padding {
+    padding-left: 0 !important;
+    padding-right: 0 !important; }
+.foat-right {
+    float: right !important;
+}

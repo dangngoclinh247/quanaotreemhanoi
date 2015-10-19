@@ -16,6 +16,7 @@ class Admin_Controllers extends base\Controllers
         parent::__construct();
         $this->views->addHeader('<link rel="stylesheet" href="/templates/admin/css/bootstrap.min.css">');
         $this->views->addHeader('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">');
-        $this->views->addHeader('<link rel="stylesheet" href="/templates/admin/css/style.css">');
+        //$this->views->addHeader('<link rel="stylesheet" href="/templates/admin/css/stydle.css">');
+        $this->views->addHeader('<link rel="stylesheet" href="/templates/admin/css/dashboard.css">');
     }
 }

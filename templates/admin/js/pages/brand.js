@@ -7,6 +7,18 @@ var readyBrandAdd = function () {
         init: function () {
 
             load_brand_list(-1); // Load brand list
+
+
+            $(document).on("input", "#brand_name", function () {
+                var slug = to_slug($(this).val());
+                $("#brand_slug").val(slug);
+            });
+
+            $(document).on("change", "#brand_slug", function () {
+                var slug = to_slug($(this).val());
+                $(this).val(slug);
+            });
+
             /**
              *  Setting button checkbox-all
              */
@@ -32,7 +44,8 @@ var readyBrandAdd = function () {
 
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['color', ['color']]
-                ]
+                ],
+                height: 150
             });
 
             /**
@@ -41,12 +54,23 @@ var readyBrandAdd = function () {
             $("#form-add-brand").validate({
                 rules: {
                     brand_name: {
-                        required: true
+                        required: true,
+                        remote: {
+                            url: "/admin.php?c=brand&m=ajax_check_brand_name",
+                            type: "post",
+                            cache: false,
+                            data: {
+                                brand_name: function () {
+                                    return $('#form-add-brand #brand_name').val();
+                                }
+                            }
+                        }
                     }
                 },
                 messages: {
                     brand_name: {
-                        required: "Vui lòng nhập Tên Thương Hiệu"
+                        required: "Vui lòng nhập Tên Thương Hiệu",
+                        remote: "Thương hiệu này đã được thêm trước đây"
                     }
                 },
                 submitHandler: function () {
@@ -62,7 +86,7 @@ var readyBrandAdd = function () {
                                 $("#form-add-brand").trigger("reset");
                             }
                             else {
-                                alert("loi: " + result);
+                                alert("Lỗi, không thể thêm thương hiệu này");
                             }
                         },
                         error: function (e) {
@@ -102,6 +126,12 @@ var readyBrandEdit = function () {
         init: function () {
 
             load_brand_list(-1); // Load brand list
+
+            $(document).on("change", "#brand_slug", function () {
+                var slug = to_slug($(this).val());
+                $(this).val(slug);
+            });
+
             /**
              *  Setting button checkbox-all
              */
@@ -171,12 +201,6 @@ var readyBrandEdit = function () {
                     success: function (result) {
                         if (result == "1") {
                             trElement.addClass("bg-color-4").fadeOut(1000);
-                            var arr = url.split("=");
-                            var brand_id = arr[arr.length-1];
-                            if(brand_id == $("#brand_id").val())
-                            {
-                                window.location.href = "/admin.php?c=brand";
-                            }
 
                         } else {
                             alert("Không thể xóa lúc này");
@@ -188,6 +212,7 @@ var readyBrandEdit = function () {
                 });
                 return false;
             });
+
         }
     };
 }();

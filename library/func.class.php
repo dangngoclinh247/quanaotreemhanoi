@@ -9,6 +9,9 @@ class Func
     {
         $data = "";
         foreach ($menus as $menu) {
+            if(!isset($menu['url'])) {
+                $menu['url'] = "#";
+            }
             if($menu['url'] == $url_current || (isset($menu['submenu']) && Func::in_array_url($url_current, $menu['submenu']) == true))
             {
                 $data .= '<li class="active"><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>' . "\n";
@@ -17,6 +20,7 @@ class Func
             {
                 $data .= '<li><a href="' . $menu['url'] . '">' . $menu['name'] . '</a>'."\n";
             }
+
             if (isset($menu['submenu'])) {
                 $data .= "<ul>";
                 $data .= Func::getMenu($menu['submenu'], $url_current);
@@ -26,6 +30,14 @@ class Func
             }
         }
         return $data;
+    }
+
+    public static function urlToString($url)
+    {
+        if($url == "")
+            return "#";
+        else
+        return $url;
     }
 
     public static function in_array_url($url_current, $menus)
@@ -49,7 +61,6 @@ class Func
             ),
             array(
                 "name" => "Quản lý người dùng",
-                "url" => "/admin.php?c=users",
                 "submenu" => array(
                     array(
                         "name" => "Thêm người dùng",
@@ -57,43 +68,70 @@ class Func
                     ),
                     array(
                         "name" => "Danh Sach",
-                        "url" => "/admin.php?c=users&m=add"
+                        "url" => "/admin.php?c=users"
                     )
                 )
             ),
             array(
                 "name" => "Quản lý tin tức",
-                "url" => "/admin.php?c=news",
                 "submenu" => array(
                     array(
-                        "name" => "Category",
-                        "url" => "/admin.php?c=news&m=ntype"
-                    ),
-                    array(
-                        "name" => "Thêm category",
-                        "url" => "/admin.php?c=news&m=ntype"
+                        "name" => "Danh sách tin tức",
+                        "url" => "/admin.php?c=news"
                     ),
                     array(
                         "name" => "Thêm tin mới",
-                        "url" => "/admin.php?c=news&m=news_add"
+                        "url" => "/admin.php?c=news&m=add"
+                    ),
+                    array(
+                        "name" => "Category",
+                        "url" => "/admin.php?c=news_type"
                     )
                 )
             ),
             array(
                 "name" => "Quản lý sản phẩm",
-                "url" => "/admin.php?c=products",
                 "submenu" => array(
                     array(
+                        "name" => "Danh sách sản phẩm",
+                        "url" => "/admin.php?c=products"
+                    ),
+                    array(
                         "name" => "Thêm sản phẩm",
-                        "url" => "/admin.php?c=products&m=products_add"
+                        "url" => "/admin.php?c=products&m=add"
                     ),
                     array(
                         "name" => "Tags",
-                        "url" => "/admin.php?c=products&m=tag"
+                        "url" => "/admin.php?c=products_tag"
                     ),
                     array(
                         "name" => "Category",
-                        "url" => "/admin.php?c=products&m=type"
+                        "url" => "/admin.php?c=products_type&m=index"
+                    ),
+                    array(
+                        "name" => "Thương hiệu",
+                        "url" => "/admin.php?c=brand"
+                    )
+                )
+            ),
+            array(
+                "name" => "Thông tin website",
+                "submenu" => array(
+                    array(
+                        "name" => "Thông tin chung",
+                        "url" => "/admin.php?c=options"
+                    ),
+                    array(
+                        "name" => "Thêm sản phẩm",
+                        "url" => "/admin.php?c=products&m=add"
+                    ),
+                    array(
+                        "name" => "Tags",
+                        "url" => "/admin.php?c=products_tag"
+                    ),
+                    array(
+                        "name" => "Category",
+                        "url" => "/admin.php?c=products_type&m=index"
                     ),
                     array(
                         "name" => "Thương hiệu",
@@ -135,14 +173,27 @@ class Func
         return $result;
     }
 
+    /**
+     * Return current url
+     *
+     * @return mixed
+     */
     public static function getUrlCurrent()
     {
         return $_SERVER["REQUEST_URI"];
     }
 
+    /**
+     * Generator slug from $str
+     *
+     * @param $str
+     * @return mixed|string
+     */
     public static function getSlug($str) //str: string
     {
         $str = trim(mb_strtolower($str));
+        $str = ltrim($str, "-");
+        $str = rtrim($str, "-");
         $str = preg_replace('/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/', 'a', $str);
         $str = preg_replace('/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/', 'e', $str);
         $str = preg_replace('/(ì|í|ị|ỉ|ĩ)/', 'i', $str);
@@ -152,23 +203,8 @@ class Func
         $str = preg_replace('/(đ)/', 'd', $str);
         $str = preg_replace('/[^a-z0-9-\s]/', '', $str);
         $str = preg_replace('/([\s]+)/', '-', $str);
-        //$str = preg_replace('/[\-\-]/', '-', $str);
+        $str = preg_replace('/[\-]{2,}/', '-', $str);
         return $str;
-    }
-
-    public static function sortNType($ntypes, $ntype_id = null)
-    {
-        $result = array();
-        foreach($ntypes as $key => $ntype)
-        {
-            if($ntype['ntype_parent_id'] == $ntype_id)
-            {
-                unset($ntypes[$key]);
-                $ntype["submenu"] = Func::sortNType($ntypes, $ntype['ntype_id']);
-                $result[] = $ntype;
-            }
-        }
-        return $result;
     }
 
     /**

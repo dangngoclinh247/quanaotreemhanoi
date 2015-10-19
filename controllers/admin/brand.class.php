@@ -19,30 +19,46 @@ class brand extends Admin_Controllers
         $this->views->addHeader('<link href="/templates/css/summernote.css" rel="stylesheet">');
     }
 
+    /**
+     * BRAND INDEX PAGE: /admin.php?c=brand
+     */
     public function index()
     {
         if (isset($_POST['btn-update-brand']) && isset($_POST['brand_id']) && $_POST['brand_id'] > 0) {
-            $this->views->update = $this->ajax_update($_POST['brand_id']); // true = success, false = error
+            $brand_id = $_POST['brand_id'];
+            $this->views->update = $this->ajax_update($brand_id);
         }
 
         $this->views->setPageTitle("Quản lý thương hiệu");
-        $this->views->render("admin/products/brand");
+        $this->views->render("admin/products_brand/index");
     }
 
+    /**
+     * EDIT PAGE: /admin.php?c=brand&m=edit&p=$brand_id
+     *
+     * @param $brand_id
+     * @throws \Exception
+     */
     public function edit($brand_id)
     {
         $this->views->setPageTitle("Update Thông tin Thương Hiệu");
 
         $brand_model = new models\Brand();
         $brand = $brand_model->select($brand_id);
+
         if ($brand != null) {
             $this->views->brand = $brand;
-            $this->views->render("admin/products/brand_edit");
+            $this->views->render("admin/products_brand/edit");
         } else {
             throw new \Exception("404 Page");
         }
     }
 
+    /**
+     * DELETE PAGE /admin.php?c=brand&m=delete&id=$brand_id
+     *
+     * @param $brand_id
+     */
     public function delete($brand_id)
     {
         $result = 0;
@@ -58,102 +74,78 @@ class brand extends Admin_Controllers
         $brand_model = new models\Brand();
         $this->views->brands = $brand_model->selectAll();
         $this->views->brand_id_highlight = $brand_id_highlight;
-        $this->views->render("admin/products/brand_list");
+        $this->views->render("admin/products_brand/list");
     }
 
+    /**
+     * Insert new Brand
+     */
     public function ajax_add()
     {
-        $result = "-1";
+        $result = -1;
         if (isset($_POST['brand_name']) && $_POST['brand_name'] != "") {
 
-            $data = array(
-                "brand_name" => $_POST['brand_name'],
-                "brand_slug" => null,
-                "brand_content" => null,
-                "brand_seo_title" => null,
-                "brand_seo_description" => null
-            );
+            $brand = new models\Brand();
+            $brand->setBrandName($_POST['brand_name']);
+            $brand->setBrandSlug($_POST['brand_slug'], true);
+            $brand->setBrandContent($_POST['brand_content']);
+            $brand->setBrandSeoTitle($_POST['brand_seo_title']);
+            $brand->setBrandSeoDescription($_POST['brand_seo_description']);
 
-            if (isset($_POST['brand_slug']) && $_POST['brand_slug'] != "") {
-                $data['brand_slug'] = Func::getSlug($_POST['brand_slug']);
-            } else {
-                $data['brand_slug'] = Func::getSlug($data['brand_name']);
-            }
 
-            if (isset($_POST['brand_seo_title']) && $_POST['brand_seo_title'] != "") {
-                $data['brand_seo_title'] = $_POST['brand_seo_title'];
-            }
-
-            if (isset($_POST['brand_seo_description']) && $_POST['brand_seo_description'] != "") {
-                $data['brand_seo_description'] = $_POST['brand_seo_description'];
-            }
-
-            if (isset($_POST['brand_content']) && strip_tags($_POST['brand_content']) != "") {
-                $data['brand_content'] = $_POST['brand_content'];
-            }
-
-            $brand_model = new models\Brand();
-            if ($brand_model->insert($data)) {
-                $result = $brand_model->insert_id;
+            if ($brand->insert()) {
+                $result = $brand->insert_id;
             }
         }
-        //print_r($data);
         echo $result;
     }
 
+    /**
+     * Update Brand
+     *
+     * @param $brand_id
+     * @return int 0 = error | 1 = update success
+     */
     public function ajax_update($brand_id)
     {
-        $result = 0; // Không update được
+        $result = 0;
         if (isset($_POST['brand_name']) && $_POST['brand_name'] != "") {
 
-            $data = array(
-                "brand_name" => $_POST['brand_name'],
-                "brand_slug" => null,
-                "brand_content" => null,
-                "brand_seo_title" => null,
-                "brand_seo_description" => null
-            );
+            $brand = new models\Brand();
+            $brand->setBrandId($brand_id);
+            $brand->setBrandName($_POST['brand_name']);
+            $brand->setBrandSlug($_POST['brand_slug'], true);
+            $brand->setBrandContent($_POST['brand_content']);
+            $brand->setBrandSeoTitle($_POST['brand_seo_title']);
+            $brand->setBrandSeoDescription($_POST['brand_seo_description']);
 
-            if (isset($_POST['brand_slug']) && $_POST['brand_slug'] != "") {
-                $data['brand_slug'] = Func::getSlug($_POST['brand_slug']);
-            } else {
-                $data['brand_slug'] = Func::getSlug($data['brand_name']);
-            }
-
-            if (isset($_POST['brand_seo_title']) && $_POST['brand_seo_title'] != "") {
-                $data['brand_seo_title'] = $_POST['brand_seo_title'];
-            }
-
-            if (isset($_POST['brand_seo_description']) && $_POST['brand_seo_description'] != "") {
-                $data['brand_seo_description'] = $_POST['brand_seo_description'];
-            }
-
-            if (isset($_POST['brand_content']) && $_POST['brand_content'] != "") {
-                $data['brand_content'] = $_POST['brand_content'];
-            }
-
-            $brand_model = new models\Brand();
-            if ($brand_model->update($data, $brand_id)) {
+            if ($brand->update()) {
                 $result = 1; // Update ok
             }
         }
         return $result;
     }
 
+    /**
+     * Check brand_name when update
+     */
     public function ajax_check_brand_name()
     {
         $result = "false"; // can't use that brand name
-        if(isset($_POST['brand_name']) && isset($_POST['brand_id']))
-        {
-            $brand_name = $_POST['brand_name'];
-            $brand_id = $_POST['brand_id'];
-            $brand_model = new models\Brand();
-            $brand = $brand_model->selectByNameDiffID($brand_name, $brand_id);
+        if (isset($_POST['brand_name'])) {
+            $brand = new models\Brand();
+            $brand->setBrandName($_POST['brand_name']);
+            if (isset($_POST['brand_id'])) {
+                $brand->setBrandId($_POST['brand_id']);
+                $brand = $brand->selectByNameDiffID();
+            } else {
+                $brand = $brand->selectByName();
+            }
+
             if (count($brand) < 1) {
                 $result = "true"; // Brand name exist in database
             }
         }
-        //echo $_POST['brand_id'];
         echo $result;
     }
 }

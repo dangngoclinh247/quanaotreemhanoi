@@ -39,188 +39,6 @@ var readyNews = function () {
     }
 }();
 
-function autoLoadNTypeList(ntype_id) {
-    // get ntype list
-    $.ajax({
-        url: "/admin.php?c=news&m=ntype_list&p=" + ntype_id,
-        success: function (result) {
-            $("#panel-ntype-list .panel-body").html(result);
-        },
-        error: function (e) {
-            alert("Khong the lay danh sach news type " + e.responseText)
-        }
-    });
-}
-
-function ntype_delete(id, current_element) {
-    $.ajax({
-        url: "/admin.php?c=news&m=ntype_del",
-        type: "post",
-        data: {
-            ntype_id: id
-        },
-        dataType: "json",
-        success: function (result) {
-            if (result.status == "1") {
-                trElement = $(current_element).closest("tr");
-                trElement.removeClass("bg-color-3").addClass("bg-color-1");
-                trElement.fadeOut(5000);
-            }
-            else {
-                alert(status.news_type);
-            }
-        },
-        error: function (e) {
-            alert("Khong the lay danh sach news type " + e.responseText)
-        }
-    });
-}
-
-function ntype_edit(id, current_element) {
-    trElement = $(current_element).closest("tr");
-    $.ajax({
-        url: "/admin.php?c=news&m=ntype_edit&p=" + id,
-        success: function (result) {
-            if (result == "0") {
-                alert("Can't Edit")
-            } else {
-                // remove all tr background color
-                $("table tr").each(function () {
-                    $(this).removeClass("bg-color-3");
-                });
-                trElement.addClass("bg-color-3");
-                $("#ntype-wrapper .ntype-command").fadeOut(200, function () {
-                    $("#ntype-wrapper .ntype-command").html(result);
-                    init_textarea();
-                    load_ntype_edit_validate(id);
-                });
-                $("#ntype-wrapper .ntype-command").css("boder-color", "#f0b67f");
-                $("#ntype-wrapper .ntype-command").fadeIn(500);
-            }
-        },
-        error: function (e) {
-            alert("Khong the lay danh sach news type " + e)
-        }
-    });
-}
-
-function init_textarea() {
-    // add textarea for ntype-content
-    $("#ntype_content").summernote({
-        toolbar: [
-            //[groupname, [button list]]
-
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['color', ['color']]
-        ]
-    });
-}
-
-function load_ntype_add() {
-    $.ajax({
-        url: "/admin.php?c=news&m=ntype_add",
-        async: false,
-        success: function (result) {
-            $("#ntype-wrapper .ntype-command").html(result);
-            init_textarea();
-            load_ntype_add_validate();
-        },
-        error: function (e) {
-            alert("Khong the lay danh sach news type " + e)
-        }
-    });
-}
-
-function load_ntype_add_validate() {
-    $("#form-add-ntype").validate({
-        rules: {
-            ntype_name: {
-                required: true
-            }
-        },
-        messages: {
-            ntype_name: {
-                required: "Vui lòng nhập Tên Category"
-            }
-        },
-        submitHandler: function () {
-            $.ajax({
-                url: "admin.php?c=news&m=ntype_insert",
-                type: "post",
-                dataType: "json",
-                data: {
-                    ntype_add: "ok",
-                    ntype_name: $("#ntype_name").val(),
-                    ntype_slug: $("#ntype_slug").val(),
-                    ntype_seo_title: $("#ntype_seo_title").val(),
-                    ntype_seo_description: $("#ntype_seo_description").val(),
-                    ntype_parent_id: $("#ntype_parent_id").val(),
-                    ntype_content: $("#ntype_content").code()
-                },
-                success: function (result) {
-                    if (result.status == "1") {
-                        $("#add-ntype-message").html(result.message);
-                        $("#add-ntype-message").show();
-                        $("#form-add-ntype").trigger("reset");
-                        autoLoadNTypeList();
-                    }
-                    else {
-                        alert("Error: " + result.mesage);
-                    }
-                },
-                error: function (e) {
-                    alert(e.responseText);
-                }
-            });
-            return false;
-        }
-    });
-}
-
-function load_ntype_edit_validate(id) {
-    $("#form-update-ntype").validate({
-        rules: {
-            ntype_name: {
-                required: true
-            }
-        },
-        messages: {
-            ntype_name: {
-                required: "Vui lòng nhập Tên Category"
-            }
-        },
-        submitHandler: function () {
-            $.ajax({
-                url: "admin.php?c=news&m=ntype_update&p=" + id,
-                type: "post",
-                dataType: "json",
-                data: {
-                    ntype_name: $("#ntype_name").val(),
-                    ntype_slug: $("#ntype_slug").val(),
-                    ntype_seo_title: $("#ntype_seo_title").val(),
-                    ntype_seo_description: $("#ntype_seo_description").val(),
-                    ntype_parent_id: $("#ntype_parent_id").val(),
-                    ntype_content: $("#ntype_content").code()
-                },
-                success: function (result) {
-                    if (result.status == "1") {
-                        $("#message-edit").html(result.message);
-                        autoLoadNTypeList(id);
-                    }
-                    else {
-                        alert("Du lieu nay da bi xoa truoc do");
-                        load_ntype_add()
-                    }
-                },
-                error: function (e) {
-                    alert(e.responseText);
-                }
-            });
-            return false;
-        }
-    });
-}
-
 /**
  * use for page news -> add
  * @type {{init}}
@@ -232,8 +50,44 @@ var readyNewsAdd = function () {
             var news_id = -1;
             var saved = true;
 
-            load_news_status_checkbox();
-            load_news_content_summernote();
+            $("#form-news-add").validate({
+                rules: {
+                    news_name: {
+                        required: true
+                    }
+
+                },
+                messages: {
+                    news_name: {
+                        required: "Vui lòng nhập Tên Category"
+                    }
+                }
+            });
+
+            $("#btn-save").click(function () {
+                if ($("#form-news-add").validate().form() == true) {
+                    if (news_id == -1) {
+                        news_insert();
+                    }
+                    else {
+                        news_update();
+                    }
+                }
+            })
+
+            /**
+             * Disabled publish date when status = draft
+             */
+            $(".status").click(function () {
+                var value = $(this).val();
+                var news_publish_date = $("#news_publish_date");
+                if (value == "1") {
+                    news_publish_date.prop("disabled", false);
+                }
+                else {
+                    news_publish_date.prop("disabled", true);
+                }
+            });
 
             $("input, textarea, select").change(function () {
                 saved = false;
@@ -248,13 +102,6 @@ var readyNewsAdd = function () {
             });
 
             /**
-             * setting active and disabled for save button
-             */
-            $("#savebutton").click(function () {
-                $(this).addClass("active").addClass("disabled");
-            });
-
-            /**
              * add slug to #news_slug when input event #news_name
              */
             $(document).on("input", "#news_name", function () {
@@ -262,6 +109,13 @@ var readyNewsAdd = function () {
                 $("#news_slug").val(slug);
             });
 
+            /**
+             * add slug to #news_slug when input event #news_name
+             */
+            $(document).on("change", "#news_slug", function () {
+                var slug = to_slug($(this).val());
+                $(this).val(slug);
+            });
 
             /**
              * checked input checkbox when click on table - tr news_type
@@ -273,33 +127,22 @@ var readyNewsAdd = function () {
 
             /**
              * confirm when unload
-             */
-            $(window).on("beforeunload", function () {
-                if (save == false) {
+
+             $(window).on("beforeunload", function () {
+                if (saved == false) {
                     return "Dữ liệu bạn chưa được lưu, vui lòng nhấn lưu trước khi thoát khỏi trang này";
                 } else {
                 }
             })
-
-
-            /**
-             *  process when user click submit
              */
-            $("button[type='submit']").click(function () {
-                if (news_id == -1) {
-                    news_insert();
-                }
-                else {
-                    news_update();
-                }
-            });
+
 
             /**
              * ajax insert news row
              */
             function news_insert() {
                 $.ajax({
-                    url: "/admin.php?c=news&m=news_insert",
+                    url: "/admin.php?c=news&m=insert",
                     data: getData(),
                     type: "post",
                     cache: false,
@@ -309,12 +152,7 @@ var readyNewsAdd = function () {
                             alert("lỗi insert");
                         }
                         else {
-                            window.location.href = "/admin.php?c=news&m=news_edit&p=" + result;
-                            /*                            news_id = result;
-                             saved = true;
-                             load_news_panel_images();
-
-                             unactive_savebutton(1000);*/
+                            window.location.href = "/admin.php?c=news&m=edit&p=" + result;
                         }
                     },
                     error: function (e) {
@@ -323,21 +161,57 @@ var readyNewsAdd = function () {
                 })
             }
 
+
+            /**
+             * init summernote for #news_content page news_add
+             */
+            $("#news_content").summernote({
+                height: 400,
+                onImageUpload: function (files) {
+                    sendFile(files[0]);
+                }
+            });
+
+
+            /**
+             *
+             * upload file for news_content - summernote page news_add
+             *
+             * @param file
+             */
+            function sendFile(file) {
+                var data = new FormData();
+                data.append("file", file);
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    url: "/admin.php?c=news&m=upload&p=" + news_id,
+                    //cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    success: function (result) {
+                        $("#news_content").summernote("insertImage", result.url, 'filename');
+                        news_id = result.id;
+                        load_images_panel(news_id);
+                    },
+                    error: function (e) {
+                        alert(e.responseText);
+                    }
+                });
+            };
+
             /**
              * ajax update news
              */
             function news_update() {
                 $.ajax({
-                    url: "/admin.php?c=news&m=news_update&p=" + news_id,
+                    url: "/admin.php?c=news&m=update&p=" + news_id,
                     data: getData(),
                     type: "post",
-                    //cache: false,
-                    //dataType: "json",
                     success: function (result) {
                         if (result == "1") {
-                            window.location.href = "/admin.php?c=news&m=news_edit&p=" + news_id;
-                            /*                            load_news_panel_images();
-                             unactive_savebutton(1000);*/
+                            window.location.href = "/admin.php?c=news&m=edit&p=" + news_id;
                         }
                         else {
                             alert("Update loi");
@@ -349,49 +223,33 @@ var readyNewsAdd = function () {
                 })
             };
 
-
-            /**
-             * init summernote for #news_content page news_add
-             */
-            function load_news_content_summernote() {
-                $("#news_content").summernote({
-                    height: 400,
-                    onImageUpload: function (files, editor, welEditable) {
-                        sendFile(files[0], editor, welEditable);
-                    }
-                });
-            }
-
-
-            /**
-             *
-             * upload file for news_content - summernote page news_add
-             *
-             * @param file
-             * @param editor
-             * @param welEditable
-             */
-            function sendFile(file, editor, welEditable) {
+            $(document).on("click", "#btn-image-featured-upload", function () {
                 var data = new FormData();
-                data.append("file", file);
-                $.ajax({
-                    data: data,
-                    type: "POST",
-                    url: "/admin.php?c=news&m=news_add_upload&p=" + news_id,
-                    //cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function (result) {
-                        $("#news_content").summernote("insertImage", result.url, 'filename');
-                        news_id = result.id;
-                        load_news_panel_images();
-                    },
-                    error: function (e) {
-                        alert(e.responseText);
-                    }
-                });
-            };
+                var file = $("#img_featured").prop("files")[0];
+                if (file == undefined) {
+                    alert("Vui lòng chọn hình ảnh");
+                }
+                else {
+                    data.append("file", file);
+                    data.append("featured", 1);
+                    $.ajax({
+                        data: data,
+                        type: "POST",
+                        url: "/admin.php?c=news&m=upload&p=" + news_id,
+                        contentType: false,
+                        processData: false,
+                        dataType: "json",
+                        success: function (result) {
+                            news_id = result.id;
+                            load_image_featured_panel(news_id);
+                            load_images_panel(news_id);
+                        },
+                        error: function (e) {
+                            alert(e.responseText);
+                        }
+                    });
+                }
+            })
         }
     }
 }();
@@ -400,15 +258,26 @@ var readyNewsEdit = function () {
     return {
         init: function () {
             var news_id = $("#news_id").val();
+            /*var time_save = new Date(0);*/
+            load_images_panel(news_id);
 
-            load_news_content_summernote();
-            load_news_status_checkbox();
-            load_news_panel_images(news_id);
-            load_image_featured(news_id);
+            $(".status").click(function () {
+                var status = $(this).val();
+                if (status == 1) {
+                    $("#news_publish_date").prop("disabled", false);
+                }
+                else {
+                    $("#news_publish_date").prop("disabled", true);
+                }
+            });
 
-            if ($(".news_status:checked").val() == 1) {
-                $("#news_publish_date").prop("disabled", false);
-            }
+            /**
+             * add slug to #news_slug when input event #news_name
+             */
+            $(document).on("change", "#news_slug", function () {
+                var slug = to_slug($(this).val());
+                $(this).val(slug);
+            });
 
             /**
              * init date time picker
@@ -418,7 +287,7 @@ var readyNewsEdit = function () {
             /**
              * setting save button
              */
-            $("#savebutton").click(function () {
+            $("#btn-save").click(function () {
                 $(this).addClass("active").addClass("disabled");
             });
 
@@ -433,14 +302,12 @@ var readyNewsEdit = function () {
             /**
              * init summernote for #news_content page news-edit
              */
-            function load_news_content_summernote() {
-                $("#news_content").summernote({
-                    height: 400,
-                    onImageUpload: function (files, editor, welEditable) {
-                        sendFile(files[0], editor, welEditable);
-                    }
-                });
-            }
+            $("#news_content").summernote({
+                height: 400,
+                onImageUpload: function (files) {
+                    sendFile(files[0]);
+                }
+            });
 
 
             /**
@@ -448,23 +315,21 @@ var readyNewsEdit = function () {
              * upload file for news_content - summernote page news-edit
              *
              * @param file
-             * @param editor
-             * @param welEditable
              */
-            function sendFile(file, editor, welEditable) {
+            function sendFile(file) {
                 var data = new FormData();
                 data.append("file", file);
                 $.ajax({
                     data: data,
                     type: "POST",
-                    url: "/admin.php?c=news&m=news_add_upload&p=" + news_id,
+                    url: "/admin.php?c=news&m=upload&p=" + news_id,
                     //cache: false,
                     contentType: false,
                     processData: false,
                     dataType: "json",
                     success: function (result) {
                         $("#news_content").summernote("insertImage", result.url, 'filename');
-                        load_news_panel_images(result.id);
+                        load_images_panel(news_id);
                     },
                     error: function (e) {
                         alert(e.responseText);
@@ -472,29 +337,75 @@ var readyNewsEdit = function () {
                 });
             };
 
+
+/*            setInterval(save_update, 1);
+            function save_update() {
+                var time = new Date(1);
+                time_save += time;
+                if(time_save.getTime() == 60*60) {
+                    $("button[type='submit']").trigger("click");
+                }
+            }*/
+
             /**
              *  process when user click submit
              */
             $("button[type='submit']").click(function () {
+                time_save = new Date(0);
+                var spinner = $(this).find("span");
+                spinner.addClass("active");
                 $.ajax({
-                    url: "/admin.php?c=news&m=news_update&p=" + $("#news_id").val(),
+                    url: "/admin.php?c=news&m=update&p=" + $("#news_id").val(),
                     data: getData(),
                     type: "post",
                     cache: false,
                     //dataType: "json",
                     success: function (result) {
                         if (result == "1") {
-                            window.location.reload();
+                            $("#modal-update-success").on("hidden.bs.modal", function () {
+                                spinner.removeClass("active");
+                            });
+
+                            $("#modal-update-success").modal("show");
                         }
                         else {
-                            alert("Update loi");
+                            alert("Update loi" + result);
                         }
                     },
                     error: function (e) {
                         alert("Loi: " + e)
                     }
-                })
+                });
+                return false;
             });
+
+            $(document).on("click", "#btn-image-featured-upload", function () {
+                var data = new FormData();
+                var file = $("#img_featured").prop("files")[0];
+                if (file == undefined) {
+                    alert("Vui lòng chọn hình ảnh");
+                }
+                else {
+                    data.append("file", file);
+                    data.append("featured", 1);
+                    $.ajax({
+                        data: data,
+                        type: "POST",
+                        url: "/admin.php?c=news&m=upload&p=" + news_id,
+                        contentType: false,
+                        processData: false,
+                        dataType: "json",
+                        success: function (result) {
+                            news_id = result.id;
+                            load_image_featured_panel(news_id);
+                            load_images_panel(news_id);
+                        },
+                        error: function (e) {
+                            alert(e.responseText);
+                        }
+                    });
+                }
+            })
         }
     }
 }();
@@ -502,15 +413,32 @@ var readyNewsEdit = function () {
 /**
  * Load news_panel_images to #news_panel_images
  */
-function load_news_panel_images(news_id) {
+function load_images_panel(news_id) {
     if (news_id > 0) {
         $.ajax({
-            url: "/admin.php?c=news&m=news_panel_images&p=" + news_id,
+            url: "/admin.php?c=news&m=images_panel&p=" + news_id,
             success: function (result) {
-                if ($("#news-panel-images").length > 0) {
-                    $("#news-panel-images").remove();
+                if ($("#panel-images").length > 0) {
+                    $("#panel-images").remove();
                 }
                 $("#news_add_right").append(result);
+            },
+            error: function (e) {
+                alert("Loi: " + e)
+            }
+        });
+    }
+}
+
+/**
+ * Load news_panel_images to #news_panel_images
+ */
+function load_image_featured_panel(news_id) {
+    if (news_id > 0) {
+        $.ajax({
+            url: "/admin.php?c=news&m=image_featured_panel&p=" + news_id,
+            success: function (result) {
+                $("#image-featured").html(result);
             },
             error: function (e) {
                 alert("Loi: " + e)
@@ -535,52 +463,46 @@ function getData() {
         news_seo_title: $("#news_seo_title").val(),
         news_seo_description: $("#news_seo_description").val(),
         ntype_id: ntype_id,
-        nstatus_id: $(".news_status:checked").val(),
-        news_publish_date: $("#news_publish_date").val(),
-        nstatus_id: $(".news_status:checked").val()
+        status: $(".status:checked").val(),
+        news_publish_date: $("#news_publish_date").val()
     };
     return data;
 }
 
-/**
- * Load news status checkbox when event click
- */
-function load_news_status_checkbox() {
-    $(".news_status").click(function () {
-        var value = $(this).val();
-        if (value == "1") {
-            $("#news_publish_date").prop("disabled", false);
-        }
-        else {
-            $("#news_publish_date").prop("disabled", true);
-        }
-    });
-}
-
-function info_image(news_id, img_id) {
+function info_image(img_id, news_id) {
     $.ajax({
-        url: "/admin.php?c=news&m=news_image_panel",
-        type: "post",
-        data: {
-            news_id: news_id,
-            img_id: img_id
-        },
+        url: "/admin.php?c=images&m=image&p=" + img_id,
         success: function (result) {
             $("#modal-news-images .news_image_panel").html(result);
             $("#modal-news-images").modal('show');
+
             $("#btn-set-image-featured").click(function () {
                 $.ajax({
-                    url: "/admin.php?c=news&m=news_image_set_featured",
-                    type: "post",
-                    data: {
-                        news_id: news_id,
-                        img_id: img_id
-                    },
+                    url: "/admin.php?c=news&m=image_set_featured&p=" + img_id,
                     success: function (result) {
                         if (result == "1") {
-                            var element = $("#btn-set-image-featured").prop("disabled", true).closest("div");
-                            element.append("Đã đặt hình này là featured");
-                            load_image_featured(news_id);
+                            $("#btn-set-image-featured").hide();
+                            $("#btn-unset-image-featured").fadeIn(1000);
+                            load_image_featured_panel(news_id);
+                        }
+                        else {
+                            alert("Khong set duoc" + result);
+                        }
+                    },
+                    error: function (e) {
+                        alert(e.responseText);
+                    }
+                });
+            });
+
+            $("#btn-unset-image-featured").click(function () {
+                $.ajax({
+                    url: "/admin.php?c=images&m=resetFeatured&p=" + img_id,
+                    success: function (result) {
+                        if (result == "1") {
+                            $("#btn-unset-image-featured").hide();
+                            $("#btn-set-image-featured").fadeIn(1000);
+                            load_image_featured_panel(news_id);
                         }
                         else {
                             alert("Khong set duoc" + result);
@@ -594,18 +516,6 @@ function info_image(news_id, img_id) {
         },
         error: function (e) {
             alert(e.responseText);
-        }
-    });
-}
-
-function load_image_featured(news_id) {
-    $.ajax({
-        url: "/admin.php?c=news&m=load_image_featured&p=" + news_id,
-        success: function (result) {
-            if ($("#panel-image-featured").length > 0) {
-                $("#panel-image-featured").remove();
-            }
-            $("#news_add_right").append(result);
         }
     });
 }

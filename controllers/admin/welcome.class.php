@@ -12,6 +12,6 @@ class Welcome extends Admin_Controllers
 
     public function index()
     {
-        $this->views->render("welcome/index");
+        $this->views->render("admin/index");
     }
 }

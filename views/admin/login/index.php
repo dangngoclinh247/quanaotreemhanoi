@@ -1,4 +1,4 @@
-<?php include '/templates/admin/template_start.php'; ?>
+<?php include '/templates/admin/old.template_start.php'; ?>
 
     <div class="container">
         <div id="panel-login" class="panel panel-default">
@@ -37,4 +37,4 @@
         })</script>
 
 
-<?php include '/templates/admin/template_end.php'; ?>
+<?php include '/templates/admin/old.template_end.php'; ?>

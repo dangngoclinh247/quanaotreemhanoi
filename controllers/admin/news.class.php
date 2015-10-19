@@ -9,6 +9,7 @@
 namespace controllers\admin;
 
 use library\Func;
+use library\Pagination;
 use library\Upload;
 use models;
 
@@ -24,19 +25,106 @@ class news extends Admin_Controllers
 
     /**
      * Page: news->index
+     * @param $page = 1
      */
-    public function index()
+    public function index($page = 1)
     {
         $news_model = new models\News();
-        $news = $news_model->selectall_admin_index();
+
+        $totalItem = $news_model->select_admin_index_count();
+        echo $totalItem;
+        $stop = 10; // item per page
+        $start = ($page - 1) * $stop;
+        $totalPage = ceil($totalItem / $stop);
+
+        $pagination = new Pagination();
+        $pagination->setCurrentPage($page);
+        $pagination->setTotalPage($totalPage);
+        $pagination->setUrl("/admin.php?c=news&m=index&p={page}");
+        $this->views->pagination = $pagination;
+        $news = $news_model->select_admin_index($start, $stop);
+        /*        echo "<pre>";
+                print_r($news);
+                var_dump($pagination);
+                echo "</pre>";
+                exit;*/
+
+        $news = $news_model->select_admin_index($start, $stop);
 
         $this->views->news = $this->sort_news_index($news);
-        /*echo "<pre>";
-        var_dump($this->views->news);
-        echo "</pre>";
-        exit;*/
+        $this->views->setPageTitle("Danh sách tin tức");
+        $this->views->render("admin/news/index");
+    }
 
-        $this->views->render("admin/news/news");
+    /**
+     * Page: News->Add
+     */
+    public function add()
+    {
+        if (isset($_POST['btn_news_add'])) {
+            echo "<pre>";
+            var_dump($_POST);
+            echo "</pre>";
+            exit;
+        }
+
+        // set page
+        $this->views->setPageTitle("Thêm tin mới");
+
+        // add select 2 for tagging
+        $this->views->addHeader('<link href="/templates/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />');
+
+        $ntype_model = new models\Ntype();
+        $this->views->ntypes = $this->ntype_sort($ntype_model->selectAll());
+
+
+        $this->views->render("admin/news/add");
+    }
+
+    /**
+     *
+     * Page news->news_edit->$news_id
+     *
+     * @param $news_id
+     */
+    public function edit($news_id)
+    {
+        $news_model = new models\News();
+        $news_model->setNewsId($news_id);
+        $news = $news_model->select();
+        //print_r($news);
+        if ($news != false) {
+
+            $this->views->news = $news;
+            // set page
+            $this->views->setPageTitle("Update tin tức");
+
+            // add select 2 for tagging
+            $this->views->addHeader('<link href="/templates/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />');
+
+            $ntype_model = new models\Ntype();
+            $this->views->ntypes = $this->ntype_sort($ntype_model->selectAll());
+
+            $news_type_details = new models\News_Type_Details();
+            $news_type_details->setNewsId($news_id);
+            $ntype_id_list = $news_type_details->select_news_type();
+
+            //print_r($ntype_id_list);
+            //exit;
+
+            $this->views->ntypes_of_news = array();
+            foreach ($ntype_id_list as $ntype) {
+                $this->views->ntypes_of_news[] = $ntype['ntype_id'];
+            }
+
+            $images = new models\Images();
+            $images->setNewsId($news_id);
+            $this->views->image = $images->selectNewsFeatured();
+
+            //print_r($this->views->image);
+            //exit;
+            $this->views->render("admin/news/edit");
+        }
     }
 
     /**
@@ -77,63 +165,9 @@ class news extends Admin_Controllers
                 $news[$i]['type'] = $type;
             }
         }
-        /*echo "<pre>";
-        print_r($news);
-        echo "</pre>";
-        exit;*/
         return $news;
     }
 
-    /**
-     *
-     * Page news->news_edit->$news_id
-     *
-     * @param $news_id
-     */
-    public function news_edit($news_id)
-    {
-        $news_model = new models\News();
-        $this->views->new = $news_model->select($news_id);
-        if ($this->views->new != false) {
-            // set page
-            $this->views->setPageTitle("Update tin tức");
-
-            // add select 2 for tagging
-            $this->views->addHeader('<link href="/templates/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />');
-
-            $ntype_model = new models\Ntype();
-            $this->views->ntypes = $this->ntype_sort($ntype_model->selectAll());
-
-            $ntype_id_list = $ntype_model->selectNTypeIdByNewsId($news_id);
-            $this->views->ntypes_of_news = array();
-            foreach ($ntype_id_list as $ntype) {
-                $this->views->ntypes_of_news[] = $ntype['ntype_id'];
-            }
-            /*            echo "<pre>";
-                        print_r($this->views->ntypes_of_news);
-                        echo "</pre>";*/
-
-            $this->views->render("admin/news/news_edit");
-        }
-    }
-
-    /**
-     * Page: News->News_Add
-     */
-    public function news_add()
-    {
-        // set page
-        $this->views->setPageTitle("Thêm tin mới");
-
-        // add select 2 for tagging
-        $this->views->addHeader('<link href="/templates/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />');
-
-        $ntype_model = new models\Ntype();
-        $this->views->ntypes = $this->ntype_sort($ntype_model->selectAll());
-
-
-        $this->views->render("admin/news/news_add");
-    }
 
     /**
      *
@@ -142,7 +176,7 @@ class news extends Admin_Controllers
      * @param $news_id
      *
      */
-    public function news_add_upload($news_id = -1)
+    public function upload($news_id = -1)
     {
         // Upload ảnh
         $upload_image = new Upload($_FILES['file']);
@@ -154,21 +188,26 @@ class news extends Admin_Controllers
         );
 
         if ($news_id == -1) {
-            $data["user_id"] = 11;
-            $data['nstatus_id'] = 3;
-            $news_model = new models\News();
-            $news_id = $news_model->insert_null($data);
+            $news = new models\News();
+            $news->setUserId($_SESSION['user_id']);
 
-            $result['id'] = $news_id;
+            if ($news->insert()) {
+                $news_id = $news->insert_id;
+                $result['id'] = $news_id;
+            }
         }
 
-        $images_model = new models\Images();
-        $images = array(
-            "img_url" => $upload_image->getResult(),
-            "img_alt" => pathinfo($upload_image->getResult(), PATHINFO_FILENAME),
-            "img_description" => null
-        );
-        $images_model->insert_news($images, $news_id);
+        $image = new models\Images();
+        $image->setNewsId($news_id);
+        $image->setImgUrl($upload_image->getResult());
+        $image->setImgAlt(pathinfo($upload_image->getResult(), PATHINFO_FILENAME));
+        $image->insert();
+
+        if (isset($_POST['featured'])) {
+            $image->setImgId($image->insert_id);
+            $image->resetNewsFeatured();
+            $image->featured();
+        }
 
         echo json_encode($result);
     }
@@ -178,89 +217,46 @@ class news extends Admin_Controllers
      *
      * @param $news_id
      */
-    public function news_update($news_id)
+    public function update($news_id)
     {
         $result = -1;
-        $data = array();
 
-        if (isset($_POST['news_name']) && $_POST['news_name'] != "") {
-            $data['news_name'] = $_POST['news_name'];
-        } else {
-            $data['news_name'] = null;
-        }
+        $news = new models\News();
+        $news->setNewsId($news_id);
+        $news->setNewsName($_POST['news_name']);
 
         if (isset($_POST['news_slug']) && $_POST['news_slug'] != "") {
-            $data['news_slug'] = Func::getSlug($_POST['news_slug']);
-        } else if ($data['news_name'] != null) {
-            $data['news_slug'] = Func::getSlug($_POST['news_snews_namelug']);
+            $news_slug = Func::getSlug($_POST['news_slug']);
         } else {
-            $data['news_slug'] = null;
+            $news_slug = Func::getSlug($news->getNewsName());
         }
 
-        if (isset($_POST['news_content']) && $_POST['news_content'] != "") {
-            $data['news_content'] = $_POST['news_content'];
-        } else {
-            $data['news_content'] = null;
-        }
-        if (isset($_POST['news_seo_title']) && $_POST['news_seo_title'] != "") {
-            $data['news_seo_title'] = $_POST['news_seo_title'];
-        } else {
-            $data['news_seo_title'] = null;
-        }
-
-        if (isset($_POST['news_seo_description']) && $_POST['news_seo_description'] != "") {
-            $data['news_seo_description'] = $_POST['news_seo_description'];
-        } else {
-            $data['news_seo_description'] = null;
-        }
-
-        if (isset($_POST['nstatus_id']) && $_POST['nstatus_id'] != "") {
-            $data['nstatus_id'] = $_POST['nstatus_id'];
-        } else {
-            $data['nstatus_id'] = 3;
-        }
-
+        $news->setNewsSlug($news_slug);
+        $news->setNewsContent($_POST['news_content']);
+        $news->setNewsSeoTitle($_POST['news_seo_title']);
+        $news->setNewsSeoDescription($_POST['news_seo_description']);
         if (isset($_POST['news_publish_date']) && $_POST['news_publish_date'] != "") {
-            $datetime = \DateTime::createFromFormat("m/d/Y H:i A", $_POST['news_publish_date']);
-            $data['news_publish_date'] = $datetime->format("Y-m-d H:i:s");
-        } else {
-            $data['news_publish_date'] = null;
+            $news->setNewsPublishDate($_POST['news_publish_date']);
         }
+        $news->setStatus($_POST['status']);
+        $news->setUserId($_SESSION['user_id']);
 
-        $data['user_id'] = 11;
+        // insert
+        if ($news->update()) { //insert success
 
-        $news_model = new models\News();
-        if ($news_model->update($data, $news_id)) {
+            $news_type_details = new models\News_Type_Details();
+            $news_type_details->setNewsId($news->getNewsId());
 
-            if (isset($_POST['ntype_id']) && count($_POST['ntype_id']) > 0) {
+            if (isset($_POST['ntype_id']) && count($_POST['ntype_id']) > 0) { // have checkbox ntype_id
 
-                // update news_type_details
                 $type_detail = $_POST['ntype_id']; // arrray
-                $type_detail_old = $news_model->select_news_type($news_id);
-                $type_detail_insert = array();
-                $type_detail_delete = array();
 
-                foreach ($type_detail_old as $value) {
-                    if (!in_array($value, $type_detail)) {
-                        $type_detail_delete[] = $value;
-                    }
-                }
+                $news_type_details->deleteAllType();
+                $news_type_details->insert_multi_type($type_detail);
 
-                foreach ($type_detail as $value) {
-                    if (!in_array($value, $type_detail_old)) {
-                        $type_detail_insert[] = $value;
-                    }
-                }
-
-                if (count($type_detail_insert) > 0) {
-                    $news_model->insert_news_type_detail($type_detail_insert, $news_id);
-                }
-
-                if (count($type_detail_delete) > 0) {
-                    $news_model->delete_news_type_detail($type_detail_delete, $news_id);
-                }
-            } else {
-                $news_model->delete_news_type_detail_all($news_id);
+            } else { // dont have checkbox
+                //echo "lamdang";
+                $news_type_details->deleteAllType();
             }
             $result = 1;
         }
@@ -269,114 +265,95 @@ class news extends Admin_Controllers
     }
 
     /**
-     * panel for info images
+     * @param $news_id
      */
-    public function news_image_panel()
+    public function images_panel($news_id)
     {
-        if (isset($_POST['news_id']) && isset($_POST['img_id'])) {
-
-            $news_id = $_POST['news_id'];
-            $img_id = $_POST['img_id'];
-
-            $images_model = new models\Images();
-            $this->views->image = $images_model->selectNews($news_id, $img_id);
-            $this->views->render("admin/news/news_image_panel");
+        $images_model = new models\Images();
+        $images_model->setNewsId($news_id);
+        $image = $images_model->selectAllNews();
+        if (count($image) > 0) {
+            $this->views->images = $image;
+            $this->views->render("admin/news/images_panel");
         }
+    }
+
+    /**
+     * Show panel image featured
+     *
+     * @param $news_id
+     */
+    public function image_featured_panel($news_id)
+    {
+        $images_model = new models\Images();
+        $images_model->setNewsId($news_id);
+        $image = $images_model->selectAllNews(true);
+        $this->views->image = $image;
+        $this->views->render("admin/news/image_featured");
     }
 
     /**
      * ajax process set Images news featured = 1
      */
-    public function news_image_set_featured()
+    public function image_set_featured($img_id)
     {
-        $result = "0";
-        if (isset($_POST['news_id']) && isset($_POST['img_id'])) {
+        $result = 0;
+        $images_model = new models\Images();
+        $images_model->setImgId($img_id);
+        $image = $images_model->select();
 
-            $news_id = $_POST['news_id'];
-            $img_id = $_POST['img_id'];
+        $images_model->setNewsId($image['news_id']);
 
-            $images_model = new models\Images();
-            $result = $images_model->setImageNewsFeatured($news_id, $img_id);
+        if ($images_model->resetNewsFeatured()) {
+            if ($images_model->featured()) {
+                $result = 1;
+            }
         }
-        //echo $news_id . "-" . $img_id;
         echo $result;
     }
 
-    public function load_image_featured($news_id)
-    {
-        $images_model = new models\News();
-        $image = $images_model->getImageFeatured($news_id);
-        if (count($image) > 0) {
-            $this->views->image = $image;
-            $this->views->render("admin/news/news_image_featured");
-        }
-    }
 
     /**
      * Ajax precess insert news row for Page news->news_add
      */
-    public function news_insert()
+    public function insert()
     {
         $result = -1;
-        $data = array();
 
-        if (isset($_POST['news_name']) && $_POST['news_name'] != "") {
-            $data['news_name'] = $_POST['news_name'];
-        } else {
-            $data['news_name'] = null;
-        }
+        $news = new models\News();
+        $news->setNewsName($_POST['news_name']);
 
         if (isset($_POST['news_slug']) && $_POST['news_slug'] != "") {
-            $data['news_slug'] = Func::getSlug($_POST['news_slug']);
-        } else if ($data['news_name'] != null) {
-            $data['news_slug'] = Func::getSlug($_POST['news_snews_namelug']);
+            $news_slug = Func::getSlug($_POST['news_slug']);
         } else {
-            $data['news_slug'] = null;
+            $news_slug = Func::getSlug($news->getNewsName());
         }
 
-        if (isset($_POST['news_content']) && $_POST['news_content'] != "") {
-            $data['news_content'] = $_POST['news_content'];
-        } else {
-            $data['news_content'] = null;
-        }
-        if (isset($_POST['news_seo_title']) && $_POST['news_seo_title'] != "") {
-            $data['news_seo_title'] = $_POST['news_seo_title'];
-        } else {
-            $data['news_seo_title'] = null;
-        }
-
-        if (isset($_POST['news_seo_description']) && $_POST['news_seo_description'] != "") {
-            $data['news_seo_description'] = $_POST['news_seo_description'];
-        } else {
-            $data['news_seo_description'] = null;
-        }
-
-        if (isset($_POST['nstatus_id']) && ($_POST['nstatus_id'] != "" && in_array($_POST['nstatus_id'], array(1, 2, 3)))) {
-            $data['nstatus_id'] = $_POST['nstatus_id'];
-        } else {
-            $data['nstatus_id'] = 3;
-        }
-
+        $news->setNewsSlug($news_slug);
+        $news->setNewsContent($_POST['news_content']);
+        $news->setNewsSeoTitle($_POST['news_seo_title']);
+        $news->setNewsSeoDescription($_POST['news_seo_description']);
         if (isset($_POST['news_publish_date']) && $_POST['news_publish_date'] != "") {
-            $data['news_publish_date'] = date("Y-m-d H:i:s", strtotime($_POST['news_publish_date']));
-        } else {
-            $data['news_publish_date'] = null;
+            $news->setNewsPublishDate($_POST['news_publish_date']);
         }
+        $news->setStatus($_POST['status']);
+        $news->setUserId($_SESSION['user_id']);
 
-        $data['user_id'] = 11;
+        // insert
+        if ($news->insert()) { //insert success
 
-        $news_model = new models\News();
-        if ($news_model->insert($data)) {
-            $news_id = $news_model->insert_id;
+            $news->setNewsId($news->insert_id);
+            $news_type_details = new models\News_Type_Details();
+            $news_type_details->setNewsId($news->getNewsId());
 
-            if (isset($_POST['ntype_id']) && count($_POST['ntype_id']) > 0) {
-                $type_detail = $_POST['ntype_id'];
+            if (isset($_POST['ntype_id']) && count($_POST['ntype_id']) > 0) { // have checkbox ntype_id
 
+                $type_detail = $_POST['ntype_id']; // arrray
                 if (count($type_detail) > 0) {
-                    $news_model->insert_news_type_detail($type_detail, $news_id);
+                    $news_type_details->insert_multi_type($type_detail);
                 }
             }
-            $result = $news_id;
+            $result = $news->getNewsId();
         }
         echo $result;
     }

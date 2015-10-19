@@ -49,32 +49,6 @@ var readyUserAdd = function () {
                         required: "Vui lòng nhập mật khẩu",
                         minlength: "Mật khẩu tối thiểu 4 ký tự"
                     }
-                },
-                submitHandler: function () {
-                    $.ajax({
-                        url: "/admin.php?c=users&m=ajax_add",
-                        type: "post",
-                        data: {
-                            user_name: $("#user_name").val(),
-                            user_email: $("#user_email").val(),
-                            user_pass: $("#user_pass").val(),
-                            roles_id: $("#roles_id").val(),
-                            add: "ok"
-                        },
-                        success: function (result) {
-                            if (result == "1") {
-                                $("#message").html(getAlert("Thêm người dùng thành công"));
-                                $("#message").show();
-                                $("#form-users-add").trigger("reset");
-                            } else {
-                                alert("loi: " + result);
-                            }
-                        },
-                        error: function (e) {
-                            alert(e.responseText);
-                        }
-                    });
-                    return false;
                 }
             });
         }
@@ -123,31 +97,6 @@ var readyUserEdit = function() {
                     user_pass: {
                         minlength: "Mật khẩu tối thiểu 4 ký tự"
                     }
-                },
-                submitHandler: function () {
-                    var user_id = $("#user_id").val();
-                    $.ajax({
-                        url: "/admin.php?c=users&m=ajax_edit&p=" + user_id,
-                        type: "post",
-                        data: {
-                            user_name: $("#user_name").val(),
-                            user_email: $("#user_email").val(),
-                            user_pass: $("#user_pass").val(),
-                            roles_id: $("#roles_id").val()
-                        },
-                        success: function (result) {
-                            if (result == "1") {
-                                $("#modal-edit-success").modal("show");
-
-                            } else {
-                                $("#form-user-edit").before(getAlert("Có lỗi", "error"));
-                            }
-                        },
-                        error: function (e) {
-                            alert(e);
-                        }
-                    });
-                    return false;
                 }
             });
 

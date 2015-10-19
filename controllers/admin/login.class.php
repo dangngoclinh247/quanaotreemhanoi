@@ -16,8 +16,6 @@ class login extends base\Controllers
 {
     public function __construct()
     {
-        $this->checkLogin();
-
         parent::__construct();
         $this->views->addHeader('<link rel="stylesheet" href="/templates/admin/css/bootstrap.min.css">');
         $this->views->addHeader('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">');
@@ -46,18 +44,19 @@ class login extends base\Controllers
             $remember = $_POST['remember'];
 
             $user_model = new models\Users();
-            $user = $user_model->selectByEmail($user_email);
+            $user_model->setUserEmail($user_email);
+            $user = $user_model->select_by_email();
             if(count($user) > 0)
             {
 
                 $user_pass = Func::genPassword($user_pass, $user['salt']);
-                $user = $user_model->login($user_email, $user_pass);
+                $user_model->setUserPass($user_pass);
+                $user = $user_model->select_by_email_and_pass();
                 if(count($user) > 0)
                 {
                     $_SESSION['user_name'] = $user['user_name'];
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['user_roles'] = $user['roles_id'];
-
                     if($remember == "true") {
                         setcookie("email", $user['user_email'], time() + 60 * 60 * 24 * 30);
                         setcookie("password", $user['user_pass'], time() + 60 * 60 * 24 * 30);

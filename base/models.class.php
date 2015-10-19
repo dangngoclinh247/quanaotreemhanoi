@@ -1,5 +1,7 @@
 <?php
+
 namespace base;
+
 class Models extends \mysqli
 {
 
@@ -11,11 +13,26 @@ class Models extends \mysqli
     }
 
     /**
+     * Convert string "" -> null
+     *
+     * @param $str
+     * @return null|string
+     */
+    protected function trim($str)
+    {
+        $str = trim($str);
+        if ($str == "") {
+            $str = null;
+        }
+        return $str;
+    }
+
+    /**
      * return full table name: prefix and name
      *
      * @return mixed
      */
-    public function getTableName($name)
+    protected function getTableName($name)
     {
         return DB_TABLE_PREFIX . $name;
     }
@@ -26,7 +43,7 @@ class Models extends \mysqli
      * @param \mysqli_result $result
      * @return array
      */
-    public function fetch_assoc_all(\mysqli_result $result)
+    protected function fetch_assoc_all(\mysqli_result $result)
     {
         $data = array();
         while($row = $result->fetch_assoc())

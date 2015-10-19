@@ -26,7 +26,8 @@ var readyLogin = function() {
                 },
                 submitHandler: function() {
                     $.ajax({
-                        url: "/admin/login/process.html",
+                        url: "/admin.php?c=login&m=process",
+                        async: false,
                         type: "post",
                         data: {
                             email: $("#email").val(),

@@ -1,0 +1,139 @@
+/*------------------------------------------------------------------------------------------------
+ * Base structure
+ ------------------------------------------------------------------------------------------------*/
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px; }
+
+/*------------------------------------------------------------------------------------------------
+ * Global add-ons
+ ------------------------------------------------------------------------------------------------*/
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee; }
+
+/*------------------------------------------------------------------------------------------------
+ * 1. Header
+ * Top navigation
+ * Hide default border to remove 1px line.
+ ------------------------------------------------------------------------------------------------*/
+#header-wrapper {
+  background: #45a7b9; }
+  #header-wrapper .navbar-header a {
+    color: #FFFFFF;
+    font-weight: bold; }
+  #header-wrapper #navbar a {
+    color: #FFFFFF; }
+
+.navbar-fixed-top {
+  border: 0; }
+
+/*------------------------------------------------------------------------------------------------
+ *  2. Sidebar
+ ------------------------------------------------------------------------------------------------*/
+/* Hide for mobile, show later */
+.sidebar {
+  color: #acb5bf;
+  background-color: #373E47 !important; }
+  .sidebar a {
+    color: #acb5bf; }
+    .sidebar a:hover {
+      color: #FFFFFF;
+      background: none !important; }
+  .sidebar > ul > li.active > a {
+    background-color: #454E59; }
+  .sidebar .nav-sidebar {
+    margin-right: -21px;
+    /* 20px padding + 1px border */
+    margin-bottom: 20px;
+    margin-left: -20px; }
+    .sidebar .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px; }
+  .sidebar > ul > li ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #575F69; }
+    .sidebar > ul > li ul > li {
+      padding: 0;
+      margin: 0; }
+    .sidebar > ul > li ul > li > a {
+      margin: 0;
+      display: block;
+      text-decoration: none;
+      padding: 10px 30px; }
+      .sidebar > ul > li ul > li > a:hover {
+        color: #FFFFFF; }
+  @media (min-width: 768px) {
+    .sidebar {
+      position: fixed;
+      top: 50px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 10px 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      /* Scrollable contents if viewport is shorter than content. */
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee; } }
+
+/*------------------------------------------------------------------------------------------------
+ * 3. Main content
+ ------------------------------------------------------------------------------------------------*/
+.main {
+  padding: 20px; }
+  .main .no-padding-left {
+    padding-left: 0 !important; }
+  .main .no-padding {
+    padding-left: 0 !important;
+    padding-right: 0 !important; }
+  .main .padding-right {
+    padding-right: 20px !important; }
+  @media (min-width: 768px) {
+    .main {
+      padding-right: 20px;
+      padding-left: 20px; } }
+  .main .page-header {
+    margin-top: 0; }
+  .main .panel table .minimenu {
+    display: none;
+    padding-top: 10px;
+    padding-bottom: 0;
+    margin: 0; }
+
+/*------------------------------------------------------------------------------------------------
+ * 4. Placeholder dashboard ideas
+ ------------------------------------------------------------------------------------------------*/
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center; }
+  .placeholders h4 {
+    margin-bottom: 0; }
+
+.placeholder {
+  margin-bottom: 20px; }
+  .placeholder img {
+    display: inline-block;
+    border-radius: 50%; }
+
+/*------------------------------------------------------------------------------------------------
+ *  5. Form
+ ------------------------------------------------------------------------------------------------*/
+form .form-group {
+  margin: 0;
+  border: none;
+  padding: 10px 15px;
+  border-bottom: 1px dotted #ebeef2; }
+form label.error {
+  color: #45a7b9;
+  font-style: italic;
+  font-weight: normal; }
+form button span.spinner i {
+  display: none !important; }
+form button span.spinner.active i {
+  display: inline !important; }
+
+/*# sourceMappingURL=dashboard.css.map */

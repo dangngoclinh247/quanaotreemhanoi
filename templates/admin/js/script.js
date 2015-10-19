@@ -1,3 +1,30 @@
+$(document).ready(function() {
+   $(".checkbox-featured").click(function() {
+       var pro_id = $(this).attr("data-id");
+       var status = $(this).prop("checked");
+       var featured = 0;
+       if(status == true)
+       {
+           featured = 1;
+       }
+       $.ajax({
+           url: "/admin.php?c=products&m=featured&p=" + pro_id,
+           type: "post",
+           data: {
+               featured: featured
+           },
+           success: function(result){
+               if(result != "1")
+               {
+                   alert("Lỗi: " + result);
+               }
+           },
+           error: function(e) {
+               alert(e);
+           }
+       });
+   })
+});
 /**
  * Created by Liam Dang on 9/25/2015.
  */

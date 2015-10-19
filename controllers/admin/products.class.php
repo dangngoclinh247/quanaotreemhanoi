@@ -13,407 +13,586 @@ use models;
 
 class products extends Admin_Controllers
 {
+    const ITEM_PER_PAGE = 25;
+
     public function __construct()
     {
         parent::__construct();
+        $this->views->addHeader('<link href="/templates/admin/css/awesome-bootstrap-checkbox.css" rel="stylesheet">');
+    }
 
-        // add summernote css for app
+    /**
+     * PAGE: /admin.php?c=products
+     *
+     * @param int $currentPage
+     */
+    public function index($currentPage = 1)
+    {
+        // get products list
+        $start = ($currentPage - 1) * self::ITEM_PER_PAGE;
+        $stop = self::ITEM_PER_PAGE;
+        $products_model = new models\Products();
+        $this->views->products = $products_model->selectLimit($start, $stop);
+        $totalItem = $products_model->selectLimitCount();
+        $totalPage = ceil($totalItem / self::ITEM_PER_PAGE);
+
+        $this->views->totalItemShow = $products_model->selectLimitCount(models\Products::STATUS_SHOW);
+        $this->views->totalItemTrash = $products_model->selectLimitCount(models\Products::STATUS_TRASH);
+        $this->views->totalItemHide = $products_model->selectLimitCount(models\Products::STATUS_HIDE);
+
+        // setting pagination
+        $pagination = new library\Pagination();
+        $pagination->setTotalPage($totalPage);
+        $pagination->setCurrentPage($currentPage);
+        $pagination->setUrl("/admin.php?c=products&m=index&p={page}");
+        $this->views->pagination = $pagination;
+
+        $this->views->setPageTitle("Quản lý sản phẩm");
+        $this->views->render("admin/products/index");
+    }
+
+    /**
+     * PAGE: /admin.php?c=products&m=hide
+     *
+     * @param int $currentPage
+     */
+    public function hide($currentPage = 1)
+    {
+        // get products list
+        $start = ($currentPage - 1) * self::ITEM_PER_PAGE;
+        $stop = self::ITEM_PER_PAGE;
+        $products_model = new models\Products();
+        $this->views->products = $products_model->selectLimit($start, $stop, models\Products::STATUS_HIDE);
+        $totalItem = $products_model->selectLimitCount(models\Products::STATUS_HIDE);
+        $totalPage = ceil($totalItem / self::ITEM_PER_PAGE);
+
+        $this->views->totalItemShow = $products_model->selectLimitCount(models\Products::STATUS_SHOW);
+        $this->views->totalItemTrash = $products_model->selectLimitCount(models\Products::STATUS_TRASH);
+        $this->views->totalItemHide = $products_model->selectLimitCount(models\Products::STATUS_HIDE);
+
+        // setting pagination
+        $pagination = new library\Pagination();
+        $pagination->setTotalPage($totalPage);
+        $pagination->setCurrentPage($currentPage);
+        $pagination->setUrl("/admin.php?c=products&m=hide&p={page}");
+        $this->views->pagination = $pagination;
+
+        $this->views->setPageTitle("Quản lý sản phẩm");
+        $this->views->render("admin/products/hide");
+    }
+
+    public function trash($currentPage = 1)
+    {
+        // get products list
+        $start = ($currentPage - 1) * self::ITEM_PER_PAGE;
+        $stop = self::ITEM_PER_PAGE;
+        $products_model = new models\Products();
+        $this->views->products = $products_model->selectLimit($start, $stop, models\Products::STATUS_TRASH);
+        $totalItem = $products_model->selectLimitCount(models\Products::STATUS_TRASH);
+        $totalPage = ceil($totalItem / self::ITEM_PER_PAGE);
+
+        $this->views->totalItemShow = $products_model->selectLimitCount(models\Products::STATUS_SHOW);
+        $this->views->totalItemTrash = $products_model->selectLimitCount(models\Products::STATUS_TRASH);
+        $this->views->totalItemHide = $products_model->selectLimitCount(models\Products::STATUS_HIDE);
+
+        // setting pagination
+        $pagination = new library\Pagination();
+        $pagination->setTotalPage($totalPage);
+        $pagination->setCurrentPage($currentPage);
+        $pagination->setUrl("/admin.php?c=products&m=trash&p={page}");
+        $this->views->pagination = $pagination;
+
+        $this->views->setPageTitle("Quản lý sản phẩm");
+        $this->views->render("admin/products/trash");
+    }
+
+    /**
+     * PAGE: admin.php?c=products&m=add
+     */
+    public function add()
+    {
+        $this->views->addHeader('<link href="/templates/css/select2.min.css" rel="stylesheet">');
+        $this->views->addHeader('<link href="/templates/css/select2-bootstrap.css" rel="stylesheet">');
         $this->views->addHeader('<link href="/templates/css/summernote.css" rel="stylesheet">');
-    }
 
-    public function index()
-    {
-        echo "products -> index";
-    }
-
-    public function products_add()
-    {
         $this->views->setPageTitle("Thêm sản phẩm");
 
+        // Get list brand
+        $brand_model = new models\Brand();
+        $this->views->brands = $brand_model->selectAll();
+
         // Get list products_type
-        $prot_model = new models\Prot();
-        $this->views->prots = $this->type_sort($prot_model->selectAll());
+        $products_type = new models\Products_Type();
+        $this->views->prots = products_type::sort($products_type->selectAll());
 
         // show form products_add
-        $this->views->render("admin/products/products_add");
+        $this->views->render("admin/products/add");
     }
 
-    public function ajax_products_add()
+    /**
+     * PAGE: admin.php?c=products&m=edit
+     *
+     * @param $pro_id
+     */
+    public function edit($pro_id)
     {
-        $result = -1;
-        if(isset($_POST['pro_add']) && $_POST['pro_add'] == "ok") {
-            $data = array(
-                "id" => null,
-                "pro_name" => null,
-                "pro_slug" => null,
-                "pro_content" => null,
-                "pro_size" => null,
-                "pro_size_info" => null,
-                "pro_price" => null,
-                "pro_quantity" => null,
-                "pro_seo_title" => null,
-                "pro_seo_description" => null,
-                "pro_status" => 0,
-                "user_id" => null,
-            );
+        if (isset($_POST['btn-products-edit'])) {
 
-            if (isset($_POST['pro_id']) && $_POST['pro_id'] != "") {
-                $data['id'] = $_POST['pro_id'];
+            $product = new models\Products();
+
+            $product->setProId($_POST['prot_id']);
+            $product->setProSlug($_POST['pro_name']);
+            $product->setProSlug($_POST['pro_slug']);
+            $product->setProContent($_POST['pro_content']);
+            $product->setProSize($_POST['pro_size']);
+            $product->setProSizeInfo($_POST['pro_size_info']);
+            $product->setProPrice($_POST['pro_price']);
+            $product->setProQuantity($_POST['pro_quantity']);
+            $product->setProSeoTitle($_POST['pro_seo_title']);
+            $product->setProSeoDescription($_POST['pro_seo_description']);
+            $product->setProStatus($_POST['pro_status']);
+            $product->setUserId($_SESSION['user_id']);
+            $product->setBrandId($_POST['brand_id']);
+
+            if ($product->update()) {
+                // Update products type
+                if (isset($_POST['prot_id']) && count($_POST['prot_id']) > 0) {
+
+                    // update products type
+                    $type_detail = $_POST['prot_id']; // array
+
+                    $products_type_details_model = new models\Products_Type_Details();
+                    $type_detail_old = $products_type_details_model->selectByProducts($pro_id);
+
+                    $type_detail_insert = array();
+                    $type_detail_delete = array();
+
+                    foreach ($type_detail_old as $value) {
+                        if (!in_array($value, $type_detail)) {
+                            $type_detail_delete[] = $value;
+                        }
+                    }
+
+                    foreach ($type_detail as $value) {
+                        if (!in_array($value, $type_detail_old)) {
+                            $type_detail_insert[] = $value;
+                        }
+                    }
+
+                    if (count($type_detail_insert) > 0) {
+                        $products_type_details_model->insert($type_detail_insert, $pro_id);
+                    }
+
+                    if (count($type_detail_delete) > 0) {
+                        $products_type_details_model->delete($type_detail_delete, $pro_id);
+                    }
+                }
             }
 
-            if (isset($_POST['pro_name']) && $_POST['pro_name'] != "") {
-                $data['pro_name'] = $_POST['pro_name'];
+        }
+
+        $this->views->addHeader('<link href="/templates/css/select2.min.css" rel="stylesheet">');
+        $this->views->addHeader('<link href="/templates/css/select2-bootstrap.css" rel="stylesheet">');
+        $this->views->addHeader('<link href="/templates/css/summernote.css" rel="stylesheet">');
+
+        $this->views->setPageTitle("Thêm sản phẩm");
+
+        // Get list brand
+        $brand_model = new models\Brand();
+        $this->views->brands = $brand_model->selectAll();
+
+        // Get list products_type
+        $prot_model = new models\Products_Type();
+        $this->views->prots = products_type::sort($prot_model->selectAll());
+
+        // GET info of this product
+        $products_model = new models\Products();
+        $products_model->setProId($pro_id);
+        $this->views->product = $products_model->select();
+
+        // GET list prot array
+        $products_type_details = new models\Products_Type_Details();
+        $this->views->prot_id = $products_type_details->selectByProducts($this->views->product['pro_id']);
+
+        // show form products_add
+        $this->views->render("admin/products/edit");
+    }
+
+    public function delete($pro_id)
+    {
+        $result = 0;
+        $products = new models\Products();
+        $products->setProId($pro_id);
+        if ($products->delete()) {
+            $result = 1;
+        }
+        echo $result;
+    }
+
+    public function deleteTrash($pro_id)
+    {
+        $result = 0;
+        $products = new models\Products();
+        $products->setProId($pro_id);
+        if ($products->delete(true)) {
+            $result = 1;
+        }
+        echo $result;
+    }
+
+    public function select($pro_id)
+    {
+        $result = array(
+            "pro_id" => -1
+        );
+        $products = new models\Products();
+        $products->setProId($pro_id);
+        $products = $products->select();
+        if (count($products) > 0) {
+            $result = $products;
+        }
+        echo json_encode($result);
+    }
+
+    /**
+     * UPLOAD IMAGE
+     *
+     * @param int $pro_id
+     */
+    public function upload($pro_id = -1)
+    {
+        // Upload ảnh
+        $upload_image = new library\Upload($_FILES['file']);
+        $upload_image->setPath("/upload/2015/09");
+        $upload_image->send();
+        $result = array(
+            "url" => "http://quanaotreemhanoi.dev" . $upload_image->getResult(),
+            "id" => $pro_id
+        );
+
+        if ($pro_id == -1) {
+            $product = new models\Products();
+            $product->setUserId($_SESSION['user_id']);
+
+            if ($product->insert()) {
+                $pro_id = $product->insert_id;
+                $result['id'] = $pro_id;
             }
+        }
+
+        $image = new models\Images();
+        $image->setProId($pro_id);
+        $image->setImgUrl($upload_image->getResult());
+        $image->setImgAlt(pathinfo($upload_image->getResult(), PATHINFO_FILENAME));
+        $image->insert();
+
+        if (isset($_POST['featured'])) {
+            $image->setImgId($image->insert_id);
+            $image->resetNewsFeatured();
+            $image->featured();
+        }
+
+        echo json_encode($result);
+    }
+
+    public function images_featured_panel($pro_id)
+    {
+        $image = new models\Images();
+        $image->setProId($pro_id);
+        $this->views->images_featured = $image->selectAllProducts(true); // featured = true
+        $this->views->render("admin/products/images_featured");
+    }
+
+    public function images_panel($pro_id)
+    {
+        $image = new models\Images();
+        $image->setProId($pro_id);
+        $this->views->images = $image->selectAllProducts();
+        $this->views->render("admin/products/images_panel");
+    }
+
+    /**
+     * SEARCH products in id or pro_name
+     *
+     * @param $keyword
+     * @param $currentPage
+     */
+    public function search($keyword, $currentPage = 1)
+    {
+        // get products list
+        $itemPerPage = self::ITEM_PER_PAGE;
+        $start = ($currentPage - 1) * $itemPerPage;
+        $stop = $itemPerPage;
+        $products_model = new models\Products();
+        $this->views->products = $products_model->search($keyword, $start, $stop);
+        $totalItem = $products_model->searchCount($keyword);
+        $totalPage = ceil($totalItem / $itemPerPage);
+
+        // setting pagination
+        $pagination = new library\Pagination();
+        $pagination->setTotalPage($totalPage);
+        $pagination->setCurrentPage($currentPage);
+        $pagination->setUrl("/admin.php?c=products&m=search&p={$keyword}&page={page}");
+        $this->views->pagination = $pagination;
+
+        $this->views->setPageTitle("Quản lý sản phẩm");
+        $this->views->keyword = $keyword;
+        $this->views->render("admin/products/search");
+    }
+
+    public function ajax_products_add_upload($pro_id = -1)
+    {
+        // Upload ảnh
+        $upload_image = new library\Upload($_FILES['file']);
+        $upload_image->setPath("/upload/" . date("Y/m"));
+        $upload_image->send();
+
+        $result = array(
+            "url" => "http://quanaotreemhanoi.dev" . $upload_image->getResult(),
+            "id" => $pro_id
+        );
+
+        if ($pro_id == -1) {
+
+            $product = new models\Products();
+            $product->setUserId($_SESSION['user_id']);
+
+            if ($product->insert()) {
+                $result['id'] = $product->insert_id;
+            }
+        }
+
+        $images = new models\Images();
+        $images->setImgUrl($upload_image->getResult());
+        $images->setImgUrl(pathinfo($upload_image->getResult(), PATHINFO_FILENAME));
+
+
+        if (isset($_POST['featured']) && $_POST['featured'] == "true") {
+            $images->setFeatured(models\Images::FEATURED_YES);
+        } else {
+            $images->setFeatured(models\Images::FEATURED_NO);
+        }
+        $images->insert_products();
+
+        echo json_encode($result);
+    }
+
+    /**
+     * Process for PAGE: products/add
+     */
+    public function insert()
+    {
+        $result = array(
+            "status" => 0
+        );
+        if (isset($_POST)) {
+            $product = new models\Products();
+            $product->setId($_POST['pro_id']);
+            $product->setProName($_POST['pro_name']);
+
 
             if (isset($_POST['pro_slug']) && $_POST['pro_slug'] != "") {
-                $data['pro_slug'] = $_POST['pro_slug'];
+                $products_slug = library\Func::getSlug($_POST['pro_slug']);
+            } else {
+                $products_slug = library\Func::getSlug($product->getProName());
             }
 
-            if (isset($_POST['pro_content']) && $_POST['pro_content'] != "") {
-                $data['pro_content'] = $_POST['pro_content'];
+            $product->setProSlug($products_slug);
+            $product->setProContent($_POST['pro_content']);
+            $product->setProSize($_POST['pro_size']);
+            $product->setProSizeInfo($_POST['pro_size_info']);
+            $product->setProPrice($_POST['pro_price']);
+            $product->setProQuantity($_POST['pro_quantity']);
+            $product->setProSeoTitle($_POST['pro_seo_title']);
+            $product->setProSeoDescription($_POST['pro_seo_description']);
+            $product->setProStatus($_POST['pro_status']);
+            $product->setUserId($_SESSION['user_id']);
+            $product->setBrandId($_POST['brand_id']);
+
+            if ($product->insert()) {
+                $result = array(
+                    "status" => 1,
+                    "pro_id" => $product->insert_id
+                );
+
+                //Insert products type
+                if (isset($_POST['prot_id']) && count($_POST['prot_id']) > 0) {
+                    $products_type = $_POST['prot_id'];
+                    $products_type_details_model = new models\Products_Type_Details();
+                    $products_type_details_model->setProId($result['pro_id']);
+                    $products_type_details_model->insert_multi_type($products_type);
+                }
             }
+        }
+        echo json_encode($result);
+    }
 
-            if (isset($_POST['pro_size']) && $_POST['pro_size'] != "") {
-                $data['pro_size'] = $_POST['pro_size'];
+    /**
+     * Process for PAGE: products/edit
+     *
+     * @param $pro_id
+     */
+    public function update($pro_id)
+    {
+        $result = 0;
+        $product = new models\Products();
+        $product->setProId($pro_id);
+        $product->setId($_POST['pro_id']);
+        $product->setProName($_POST['pro_name']);
+
+        if (isset($_POST['news_slug']) && $_POST['news_slug'] != "") {
+            $products_slug = library\Func::getSlug($_POST['news_slug']);
+        } else {
+            $products_slug = library\Func::getSlug($product->getProName());
+        }
+
+        $product->setProSlug($products_slug);
+        $product->setProContent($_POST['pro_content']);
+        $product->setProSize($_POST['pro_size']);
+        $product->setProSizeInfo($_POST['pro_size_info']);
+        $product->setProPrice($_POST['pro_price']);
+        $product->setProQuantity($_POST['pro_quantity']);
+        $product->setProSeoTitle($_POST['pro_seo_title']);
+        $product->setProSeoDescription($_POST['pro_seo_description']);
+        $product->setProStatus($_POST['pro_status']);
+        $product->setUserId($_SESSION['user_id']);
+        $product->setBrandId($_POST['brand_id']);
+
+        if ($product->update()) {
+            $products_type_details = new models\Products_Type_Details();
+            $products_type_details->setProId($pro_id);
+
+            if (isset($_POST['prot_id']) && count($_POST['prot_id']) > 0) { // have checkbox ntype_id
+
+                $type_detail = $_POST['prot_id']; // arrray
+
+                $products_type_details->deleteAllType();
+                $products_type_details->setProId($pro_id);
+                $products_type_details->insert_multi_type($type_detail);
+
+            } else { // dont have checkbox
+                //echo "lamdang";
+                $products_type_details->deleteAllType();
             }
+            $result = 1;
+        }
+        echo $result;
+    }
 
-            if (isset($_POST['pro_size_info']) && $_POST['pro_size_info'] != "") {
-                $data['pro_size_info'] = $_POST['pro_size_info'];
+    /**
+     * Load panel for products image - Modal
+     *
+     * @param $pro_id
+     */
+    public
+    function products_image($pro_id)
+    {
+        if (isset($_POST['img_id'])) {
+            $images_model = new models\Images();
+            $img_id = $_POST['img_id'];
+            $image = $images_model->selectProducts($pro_id, $img_id);
+            if ($image != false) {
+                $this->views->image = $image;
+                $this->views->render("admin/products/products_image");
+            } else {
+                exit("What the hell?");
             }
+        } else {
+            exit("What the hell?");
+        }
+    }
 
-            if (isset($_POST['pro_quantity']) && $_POST['pro_quantity'] != "") {
-                $data['pro_quantity'] = $_POST['pro_quantity'];
-            }
-
-            if (isset($_POST['pro_seo_title']) && $_POST['pro_seo_title'] != "") {
-                $data['pro_seo_title'] = $_POST['pro_seo_title'];
-            }
-
-            if (isset($_POST['pro_seo_description']) && $_POST['pro_seo_description'] != "") {
-                $data['pro_seo_description'] = $_POST['pro_seo_description'];
-            }
-
-            if (isset($_POST['pro_status']) && $_POST['pro_status'] != "") {
-                $data['pro_status'] = $_POST['pro_status'];
-            }
-
-            if (isset($_SESSION['user_id']) && $_SESSION['user_id'] != "") {
-                $data['user_id'] = $_SESSION['user_id'];
-            }
-
-            //print_r($data);
-
-            $products_model = new models\Products();
-            if($products_model->insert($data))
-            {
-                $result = $products_model->insert_id;
+    public
+    function products_image_set_featured($pro_id)
+    {
+        $result = 0;
+        if (isset($_POST['img_id'])) {
+            $images_model = new models\Images();
+            $img_id = $_POST['img_id'];
+            $image = $images_model->setProductsFeatured($pro_id, $img_id);
+            if ($image != false) {
+                $result = 1;
             }
         }
         echo $result;
     }
 
-    public function tag()
+    /**
+     * Process when click unset featured
+     *
+     * @param $pro_id
+     */
+    public function products_image_unset_featured($pro_id)
     {
-        $this->views->render("admin/products/tag");
-    }
-
-    public function tag_add()
-    {
-        $this->views->render("admin/products/tag_add");
-    }
-
-    public function tag_insert()
-    {
-        $result = array(
-            "status" => 0,
-            "message" => "What do you want?"
-        );
-
-        if (isset($_POST['ptag_add']) && $_POST['ptag_add'] == "ok") {
-            $data = array(
-                "ptag_name" => $_POST['ptag_name'],
-                "ptag_slug" => trim($_POST['ptag_slug']),
-                "ptag_seo_title" => $_POST['ptag_seo_title'],
-                "ptag_seo_description" => $_POST['ptag_seo_description'],
-                "ptag_add_date" => date("Y-m-d H:i:s"),
-                "ptag_content" => $_POST['ptag_content']
-            );
-
-            if ($data['ptag_slug'] == "") {
-                $data['ptag_slug'] = library\Func::getSlug(trim($data['ptag_name']));
-            } else {
-                $data['ptag_slug'] = library\Func::getSlug(trim($data['ptag_slug']));
-            }
-            if ($data['ptag_seo_title'] == "") {
-                $data['ptag_seo_title'] = null;
-            }
-            if ($data['ptag_seo_description'] == "") {
-                $data['ptag_seo_description'] = null;
-            }
-            if (strip_tags($data['ptag_content']) == "") {
-                $data['ptag_content'] = null;
-            }
-
-            $ptag_model = new models\Ptag();
-            $result_insert = $ptag_model->insert($data);
-            if ($result_insert == true) {
-                $result = array(
-                    "status" => "1",
-                    "message" => library\Func::getAlert("Da Them Category Thanh Cong")
-                );
-            } else {
-                $result['message'] = $result_insert;
+        $result = 0;
+        if (isset($_POST['img_id'])) {
+            $images_model = new models\Images();
+            $img_id = $_POST['img_id'];
+            $image = $images_model->unsetProductsFeatured($pro_id, $img_id);
+            if ($image != false) {
+                $result = 1;
             }
         }
-        echo json_encode($result);
+        echo $result;
     }
 
-    public function tag_list($ptag_id = -1)
+    /**
+     * Load products images panel
+     *
+     * @param $pro_id
+     */
+    public function products_images($pro_id)
     {
-        // Get all ptag
-        $ptag_model = new models\Ptag();
-        $this->views->ptags = $ptag_model->selectAll();
-        $this->views->ptag_id_highlight = $ptag_id;
-
-        $this->views->render("admin/products/tag_list");
+        $images_model = new models\Images();
+        $this->views->images = $images_model->selectAllProducts($pro_id);
+        $this->views->render("admin/products/products_images_panel");
     }
 
-    public function tag_edit($ptag_id)
+    /**
+     * Load products images featured panel
+     *
+     * @param $pro_id
+     */
+    public function products_images_featured($pro_id)
     {
-        // Get all ptag
-        $ptag_model = new models\Ptag();
-        $this->views->ptag = $ptag_model->select($ptag_id);
-        if ($this->views->ptag == false) {
-            echo "0";
-        } else {
-            $this->views->render("admin/products/tag_edit");
-        }
+        $images_model = new models\Images();
+        $this->views->images = $images_model->selectAllProducts($pro_id, true); //true => featured = 1
+        $this->views->render("admin/products/products_images_featured_panel");
     }
 
-    public function tag_update($ptag_id)
+    public function featured($pro_id)
     {
-        $ptag_model = new models\Ptag();
-        $this->views->ptag = $ptag_model->select($ptag_id);
-
-        $result = array(
-            "status" => 0,
-            "message" => "Loi"
-        );
-        if ($this->views->ptag == false) {
-            $result['message'] = "Products Tag Nay Da Bi Xoa";
-        } else {
-            $data = array(
-                "ptag_name" => $_POST['ptag_name'],
-                "ptag_slug" => trim($_POST['ptag_slug']),
-                "ptag_seo_title" => $_POST['ptag_seo_title'],
-                "ptag_seo_description" => $_POST['ptag_seo_description'],
-                "ptag_add_date" => date("Y-m-d H:i:s"),
-                "ptag_content" => $_POST['ptag_content']
-            );
-
-            if ($data['ptag_slug'] == "") {
-                $data['ptag_slug'] = library\Func::getSlug(trim($data['ptag_name']));
-            } else {
-                $data['ptag_slug'] = library\Func::getSlug(trim($data['ptag_slug']));
-            }
-
-            if ($data['ptag_seo_title'] == "") {
-                $data['ptag_seo_title'] = null;
-            }
-
-            if ($data['ptag_seo_description'] == "") {
-                $data['ptag_seo_description'] = null;
-            }
-
-            if (strip_tags($data['ptag_content']) == "") {
-                $data['ptag_content'] = null;
-            }
-
-            if ($ptag_model->update($data, $ptag_id) == true) {
-                $result['status'] = "1";
-                $result['message'] = library\Func::getAlert("Update Thanh Cong");
-            }
-        }
-        echo json_encode($result);
-    }
-
-
-    public function tag_del()
-    {
-        $result = "0";
-        if (isset($_POST['ptag_id'])) {
-            $ptag_id = $_POST['ptag_id'];
-            $ptag_model = new models\Ptag();
-            if ($ptag_model->select($ptag_id) != false) // tồn tại
-            {
-                if ($ptag_model->delete($ptag_id) == true) {
-                    $result = "1";
+        $result = 0;
+        if(isset($_POST['featured'])) {
+            $products_model = new models\Products();
+            $products_model->setProId($pro_id);
+            $product = $products_model->select();
+            if (count($product) > 0) {
+                $pro_featured = $_POST['featured'];
+                $products_model->setProFeatured($pro_featured);
+                if($products_model->update_featured())
+                {
+                    $result = 1;
                 }
             }
         }
         echo $result;
     }
 
-    public function type()
+    public function insert_example()
     {
-        $this->views->render("admin/products/type");
-    }
-
-    public function type_list($prot_id = -1)
-    {
-        // Get all ptag
-        $prot_model = new models\Prot();
-        $this->views->prots = $this->type_sort($prot_model->selectAll());
-        $this->views->prot_id_highlight = $prot_id;
-
-        $this->views->render("admin/products/type_list");
-    }
-
-    public function type_edit($prot_id)
-    {
-        // Get all ptag
-        $prot_model = new models\Prot();
-        $this->views->prots = $this->type_sort($prot_model->selectAll());
-        $this->views->prot = $prot_model->select($prot_id);
-        if ($this->views->prot == false) {
-            echo "0";
-        } else {
-            $this->views->render("admin/products/type_edit");
-        }
-    }
-
-    public function type_update($prot_id)
-    {
-        $prot_model = new models\Prot();
-        $this->views->prot = $prot_model->select($prot_id);
-
-        $result = array(
-            "status" => 0,
-            "message" => "Loi"
-        );
-        if ($this->views->prot == false) {
-            $result['message'] = "Product Tag Nay Da Bi Xoa";
-
-        } else {
-            $data = array(
-                "prot_name" => $_POST['prot_name'],
-                "prot_slug" => $_POST['prot_slug'],
-                "prot_seo_title" => $_POST['prot_seo_title'],
-                "prot_seo_description" => $_POST['prot_seo_description'],
-                "prot_parent_id" => $_POST['prot_parent_id'],
-                "prot_content" => $_POST['prot_content']
-            );
-
-            $data['prot_slug'] = library\Func::getSlug(trim($data['prot_slug']));
-
-            if ($data['prot_slug'] == "") {
-                $data['prot_slug'] = library\Func::getSlug(trim($data['prot_name']));
-            }
-            if ($data['prot_seo_title'] == "") {
-                $data['prot_seo_title'] = null;
-            }
-            if ($data['prot_seo_description'] == "") {
-                $data['prot_seo_description'] = null;
-            }
-            if ($data['prot_parent_id'] == "") {
-                $data['prot_parent_id'] = null;
-            }
-            if (strip_tags($data['prot_content']) == "") {
-                $data['prot_content'] = null;
-            }
-
-            $prot_model = new models\Prot();
-            $result_del = $prot_model->update($data, $prot_id);
-            if ($result_del == true) {
-                $result['status'] = "1";
-                $result['message'] = library\Func::getAlert("Update Thanh Cong");
-            }
-        }
-        echo json_encode($result);
-    }
-
-
-    public function type_del($prot_id)
-    {
-        $result = "0";
-        $prot_model = new models\Prot();
-        if ($prot_model->select($prot_id) != false) // tồn tại
+        $products = new models\Products();
+        $products->setProName("Đầm Nớ Bé Gái Cát Thái Xanh Ngọc");
+        $products->setProSlug(library\Func::getSlug($products->getProName()));
+        $products->setProSize(8);
+        $products->setProSizeInfo("1 - 8");
+        $products->setProStatus(models\Products::STATUS_SHOW);
+        $i = 50;
+        do
         {
-            if ($prot_model->delete($prot_id) == true) {
-                $result = "1";
-            }
-        }
-        echo $result;
-    }
-
-    public function type_add()
-    {
-        // Get all prot
-        $prot_modal = new models\Prot();
-        $this->views->prots = $this->type_sort($prot_modal->selectAll());
-        $this->views->render("admin/products/type_add");
-    }
-
-    public function type_insert()
-    {
-
-        $data = array(
-            "prot_name" => $_POST['prot_name'],
-            "prot_slug" => $_POST['prot_slug'],
-            "prot_seo_title" => $_POST['prot_seo_title'],
-            "prot_seo_description" => $_POST['prot_seo_description'],
-            "prot_add_date" => date("Y-m-d H:i:s"),
-            "prot_parent_id" => $_POST['prot_parent_id'],
-            "prot_content" => $_POST['prot_content']
-        );
-
-        $data['prot_slug'] = library\Func::getSlug(trim($data['prot_slug']));
-
-        if ($data['prot_slug'] == "") {
-            $data['prot_slug'] = library\Func::getSlug(trim($data['prot_name']));
-        }
-        if ($data['prot_seo_title'] == "") {
-            $data['prot_seo_title'] = null;
-        }
-        if ($data['prot_seo_description'] == "") {
-            $data['prot_seo_description'] = null;
-        }
-        if ($data['prot_parent_id'] == "") {
-            $data['prot_parent_id'] = null;
-        }
-        if (strip_tags($data['prot_content']) == "") {
-            $data['prot_content'] = null;
-        }
-
-        $prot_model = new models\Prot();
-        $result = $prot_model->insert($data);
-        if ($result == true) {
-            exit(json_encode(array(
-                "status" => "1",
-                "message" => library\Func::getAlert("Da Them Category Thanh Cong"),
-                "prot_id" => $prot_model->insert_id
-            )));
-        } else {
-            exit(json_encode(array(
-                "status" => "0",
-                "message" => "Error:" . $result
-            )));
-        }
-    }
-
-    /**
-     *  Sort products all type to list
-     */
-    public function type_sort($prots, $prot_parent_id = null)
-    {
-        $result = array();
-        foreach ($prots as $key => $prot) {
-            if ($prot['prot_parent_id'] == $prot_parent_id) {
-                unset($prots[$key]);
-                $prot['submenu'] = $this->type_sort($prots, $prot['prot_id']);
-                $result[] = $prot;
-            }
-        }
-        return $result;
+            $i++;
+            $products->setId("0000" . $i);
+            $products->insert();
+        }while($i < 100);
     }
 }
